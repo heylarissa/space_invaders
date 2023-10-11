@@ -51,7 +51,7 @@ void execute_event(space *board, shot_sentinel *list)
 				if (can_shoot(board, x, y, list))
 				{
 					enemy *shooter = (enemy *)board->map[x][y].entity;
-					list=straight_shoot(board, list, shooter);
+					straight_shoot(board, list, shooter);
 				}
 			}
 		}
