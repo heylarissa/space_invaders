@@ -20,7 +20,7 @@ typedef struct enemy{
 	int position_x;
 	int position_y;
 } enemy;
-
+int can_shoot(space *board, int enemy_x, int enemy_y, shot_sentinel *list) ;
 shot_sentinel* create_shotlist(void);
 void clean_shots(shot_sentinel *list);
 shot* remove_shot(shot* current, shot* previous, shot_sentinel *list);
