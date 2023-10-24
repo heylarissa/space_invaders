@@ -26,9 +26,16 @@ int main()
     al_init();
     al_install_keyboard();
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 30.0);
+    must_init(timer, "timer");
+
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
+    must_init(queue, "queue");
+
     ALLEGRO_DISPLAY *disp = al_create_display(320, 200);
+    must_init(disp, "display");
+
     ALLEGRO_FONT *font = al_create_builtin_font();
+    must_init(font, "font");
 
     /* registra os eventos na fila */
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -36,6 +43,7 @@ int main()
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
     al_start_timer(timer);
+
     bool redraw = true;
     ALLEGRO_EVENT event;
 
