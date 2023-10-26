@@ -4,6 +4,12 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 
+#define KEY_SEEN 1
+#define KEY_RELEASED 2
+
+#define TRUE 1
+#define FALSE 0
+
 void must_init(bool test, const char *description)
 {
     if (test)
@@ -48,9 +54,6 @@ int main()
     x = 100;
     y = 100;
 
-#define KEY_SEEN 1
-#define KEY_RELEASED 2
-
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
 
@@ -81,7 +84,7 @@ int main()
             break;
 
         case ALLEGRO_EVENT_KEY_DOWN:
-            key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED; // armazena no vetor qual foi a tecla pressionada
+            key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED; // armazena no vetor na posição respectiva a tecla
             break;
         case ALLEGRO_EVENT_KEY_UP:
             key[event.keyboard.keycode] &= KEY_RELEASED;
