@@ -1,3 +1,6 @@
 a.out
 enemy.h.gch
 space.h.gch
+game
+*.o
+*.out
