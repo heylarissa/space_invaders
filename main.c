@@ -10,12 +10,24 @@
 #define TRUE 1
 #define FALSE 0
 
+#define HEIGHT_DISPLAY 900
+#define WIDTH_DISPLAY 1000
+
+#define SIZE_PLAYER 50
+
+typedef struct player
+{
+    float x, y;
+    int score;
+
+} PLAYER;
+
 void must_init(bool test, const char *description)
 {
     if (test)
         return;
 
-    printf("couldn't initialize %s\n", description);
+    printf("Couldn't initialize %s\n", description);
     exit(1);
 }
 
@@ -34,7 +46,7 @@ int main()
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
     al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 
-    ALLEGRO_DISPLAY *disp = al_create_display(640, 480);
+    ALLEGRO_DISPLAY *disp = al_create_display(WIDTH_DISPLAY, HEIGHT_DISPLAY);
     must_init(disp, "display");
 
     ALLEGRO_FONT *font = al_create_builtin_font();
@@ -48,11 +60,13 @@ int main()
 
     bool done = false;
     bool redraw = true;
+
     ALLEGRO_EVENT event;
 
-    float x, y;
-    x = 100;
-    y = 100;
+    PLAYER player;
+    player.x = WIDTH_DISPLAY / 2;
+    player.y = HEIGHT_DISPLAY - SIZE_PLAYER - 20;
+    player.score = 0;
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -65,15 +79,10 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            if (key[ALLEGRO_KEY_UP])
-                y--;
-            if (key[ALLEGRO_KEY_DOWN])
-                y++;
             if (key[ALLEGRO_KEY_LEFT])
-                x--;
+                player.x -= SIZE_PLAYER / 2;
             if (key[ALLEGRO_KEY_RIGHT])
-                x++;
-
+                player.x += SIZE_PLAYER / 2;
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
 
@@ -83,10 +92,11 @@ int main()
             redraw = true;
             break;
 
-        case ALLEGRO_EVENT_KEY_DOWN:
-            key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED; // armazena no vetor na posição respectiva a tecla
+        case ALLEGRO_EVENT_KEY_DOWN:                               // tecla pressionada
+            key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED; // armazena no vetor na posição respectiva ao keycode da tecla
             break;
-        case ALLEGRO_EVENT_KEY_UP:
+
+        case ALLEGRO_EVENT_KEY_UP: // tecla liberada
             key[event.keyboard.keycode] &= KEY_RELEASED;
             break;
 
@@ -101,8 +111,10 @@ int main()
         if (redraw && al_is_event_queue_empty(queue))
         {
             al_clear_to_color(al_map_rgb(0, 0, 0));
-            al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "X: %.1f Y: %.1f", x, y);
-            al_draw_filled_rectangle(x, y, x + 10, y + 10, al_map_rgb(255, 0, 0));
+            al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "X: %.1f Y: %.1f", player.x, player.y);
+            al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 50, 0, "SCORE: %d", player.score);
+
+            al_draw_filled_rectangle(player.x, player.y, player.x + 50, player.y + 50, al_map_rgb(255, 255, 255));
 
             al_flip_display();
 
