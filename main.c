@@ -19,8 +19,15 @@ typedef struct player
 {
     float x, y;
     int score;
-
 } PLAYER;
+
+typedef struct enemy
+{
+    float x, y;
+    int size, qtdd;
+    struct enemy *next;
+    int r, g, b; // cor do inimigo
+} ENEMY;
 
 void must_init(bool test, const char *description)
 {
@@ -51,7 +58,6 @@ int main()
 
     ALLEGRO_FONT *font = al_create_builtin_font();
     must_init(font, "font");
-
     must_init(al_init_primitives_addon(), "primitives");
 
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -68,10 +74,19 @@ int main()
     player.y = HEIGHT_DISPLAY - SIZE_PLAYER - 20;
     player.score = 0;
 
+    ENEMY *enemy;
+    enemy = malloc(sizeof(ENEMY));
+    enemy->size = SIZE_PLAYER;
+    enemy->qtdd = 1;
+    enemy->next = NULL;
+    enemy->x = WIDTH_DISPLAY / 2;
+    enemy->y = HEIGHT_DISPLAY - SIZE_PLAYER - 20;
+
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
 
     al_start_timer(timer);
+
     while (1)
     {
         al_wait_for_event(queue, &event);
@@ -79,10 +94,15 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            if (key[ALLEGRO_KEY_LEFT])
+
+            if (key[ALLEGRO_KEY_LEFT] && (player.x != 0))
+            {
                 player.x -= SIZE_PLAYER / 2;
-            if (key[ALLEGRO_KEY_RIGHT])
+            }
+            if (key[ALLEGRO_KEY_RIGHT] && player.x != WIDTH_DISPLAY - SIZE_PLAYER)
+            {
                 player.x += SIZE_PLAYER / 2;
+            }
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
 
