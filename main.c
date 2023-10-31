@@ -10,10 +10,21 @@
 #define TRUE 1
 #define FALSE 0
 
-#define HEIGHT_DISPLAY 900
+#define HEIGHT_DISPLAY 800
 #define WIDTH_DISPLAY 1000
+#define MARGIN 100
+#define TOTAL_WIDTH WIDTH_DISPLAY + MARGIN
+#define TOTAL_HEIGHT HEIGHT_DISPLAY + MARGIN
 
 #define SIZE_PLAYER 50
+
+typedef struct shot
+{
+
+    struct shot *next;
+    int direction;
+
+} SHOT;
 
 typedef struct player
 {
@@ -53,7 +64,7 @@ int main()
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
     al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
 
-    ALLEGRO_DISPLAY *disp = al_create_display(WIDTH_DISPLAY, HEIGHT_DISPLAY);
+    ALLEGRO_DISPLAY *disp = al_create_display(TOTAL_WIDTH, TOTAL_HEIGHT);
     must_init(disp, "display");
 
     ALLEGRO_FONT *font = al_create_builtin_font();
@@ -71,7 +82,7 @@ int main()
 
     PLAYER player;
     player.x = WIDTH_DISPLAY / 2;
-    player.y = HEIGHT_DISPLAY - SIZE_PLAYER - 20;
+    player.y = HEIGHT_DISPLAY - SIZE_PLAYER;
     player.score = 0;
 
     ENEMY *enemy;
@@ -79,8 +90,8 @@ int main()
     enemy->size = SIZE_PLAYER;
     enemy->qtdd = 1;
     enemy->next = NULL;
-    enemy->x = WIDTH_DISPLAY / 2;
-    enemy->y = HEIGHT_DISPLAY - SIZE_PLAYER - 20;
+    enemy->x = 0;
+    enemy->y = 100 - SIZE_PLAYER;
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -95,16 +106,21 @@ int main()
         {
         case ALLEGRO_EVENT_TIMER:
 
-            if (key[ALLEGRO_KEY_LEFT] && (player.x != 0))
+            if (key[ALLEGRO_KEY_LEFT] && (player.x != MARGIN))
             {
                 player.x -= SIZE_PLAYER / 2;
             }
-            if (key[ALLEGRO_KEY_RIGHT] && player.x != WIDTH_DISPLAY - SIZE_PLAYER)
+            else if (key[ALLEGRO_KEY_RIGHT] && player.x != TOTAL_WIDTH - SIZE_PLAYER - MARGIN)
             {
                 player.x += SIZE_PLAYER / 2;
             }
-            if (key[ALLEGRO_KEY_ESCAPE])
+            else if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
+
+            else if (key[ALLEGRO_KEY_SPACE])
+            {
+                done = true;
+            }
 
             for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
                 key[i] &= KEY_SEEN;
@@ -134,7 +150,9 @@ int main()
             al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "X: %.1f Y: %.1f", player.x, player.y);
             al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 50, 0, "SCORE: %d", player.score);
 
-            al_draw_filled_rectangle(player.x, player.y, player.x + 50, player.y + 50, al_map_rgb(255, 255, 255));
+            al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, al_map_rgb(255, 0, 0));
+
+            al_draw_filled_rectangle(player.x, player.y, player.x + SIZE_PLAYER, player.y + SIZE_PLAYER, al_map_rgb(255, 255, 255));
 
             al_flip_display();
 
