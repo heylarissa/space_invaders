@@ -10,6 +10,9 @@
 #define TRUE 1
 #define FALSE 0
 
+#define LEFT 0
+#define RIGHT 1
+
 #define HEIGHT_DISPLAY 800
 #define WIDTH_DISPLAY 1600
 #define MARGIN 100
@@ -73,7 +76,10 @@ int main()
     ALLEGRO_DISPLAY *disp = al_create_display(TOTAL_WIDTH, TOTAL_HEIGHT);
     must_init(disp, "display");
 
+    al_init_font_addon();
     ALLEGRO_FONT *font = al_create_builtin_font();
+    font = al_load_font("VT323-Regular.ttf", 48, 0); // Substitua "sua_fonte.ttf" e 48 pelo seu arquivo TTF e tamanho desejado
+
     must_init(font, "font");
     must_init(al_init_primitives_addon(), "primitives");
 
@@ -99,6 +105,7 @@ int main()
     enemy->y = 100 - SIZE_PLAYER;
 
     int menu = TRUE;
+    int enemydirection = LEFT;
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -125,17 +132,20 @@ int main()
             else
             {
                 /* enemy logic */
-                enemy->x += 10;
-
-                if (enemy->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN)
+                if (enemydirection == LEFT)
                 {
-                    enemy->x = MARGIN;
-                    enemy->y += SIZE_PLAYER;
+                    enemy->x += 10;
                 }
-                // if (enemy->y == TOTAL_HEIGHT - SIZE_PLAYER - MARGIN)
-                // {
-                //     gameover = TRUE;
-                // }
+                else
+                {
+                    enemy->x -= 10;
+                }
+
+                if ((enemy->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN) || (enemy->x == MARGIN))
+                {
+                    enemy->y += SIZE_PLAYER/2;
+                    enemydirection = !enemydirection; // inverte a direção
+                }
 
                 /* player logic */
                 if (key[ALLEGRO_KEY_LEFT] && (player.x != MARGIN))
@@ -176,7 +186,7 @@ int main()
 
             if (menu)
             {
-                al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 50, 0, "MENU");
+                al_draw_textf(font, al_map_rgb(255, 255, 255), WIDTH_DISPLAY / 2, HEIGHT_DISPLAY / 2, ALLEGRO_ALIGN_CENTER, "MENU");
             }
             else
             {
