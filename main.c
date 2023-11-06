@@ -11,7 +11,7 @@
 #define FALSE 0
 
 #define HEIGHT_DISPLAY 800
-#define WIDTH_DISPLAY 1000
+#define WIDTH_DISPLAY 1600
 #define MARGIN 100
 #define TOTAL_WIDTH WIDTH_DISPLAY + MARGIN
 #define TOTAL_HEIGHT HEIGHT_DISPLAY + MARGIN
@@ -20,24 +20,30 @@
 
 typedef struct shot
 {
-
-    struct shot *next;
     int direction;
-
+    float x, y;
+    struct shot *next;
 } SHOT;
 
 typedef struct player
 {
     float x, y;
     int score;
-} PLAYER;
+    int lives;
+    SHOT *shots; // lista de tiros ativos
 
-typedef struct enemy
+} PLAYER;
+// player sprite will require two costumes, a regular one and a dead one
+// a sprite for the player, aliens, spaceship and bullets
+typedef struct enemy // apenas 2 inimigos podem atirar
 {
     float x, y;
-    int size, qtdd;
-    struct enemy *next;
+    int size;
     int r, g, b; // cor do inimigo
+    int type;    // existem 3 tipos de inimigos
+    int alive;   // vivo?
+    SHOT shot;   // tiro do inimigo - um por vez
+    struct enemy *next;
 } ENEMY;
 
 void must_init(bool test, const char *description)
@@ -88,10 +94,11 @@ int main()
     ENEMY *enemy;
     enemy = malloc(sizeof(ENEMY));
     enemy->size = SIZE_PLAYER;
-    enemy->qtdd = 1;
     enemy->next = NULL;
-    enemy->x = 0;
+    enemy->x = MARGIN;
     enemy->y = 100 - SIZE_PLAYER;
+
+    int menu = TRUE;
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -105,21 +112,40 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-
-            if (key[ALLEGRO_KEY_LEFT] && (player.x != MARGIN))
-            {
-                player.x -= SIZE_PLAYER / 2;
-            }
-            else if (key[ALLEGRO_KEY_RIGHT] && player.x != TOTAL_WIDTH - SIZE_PLAYER - MARGIN)
-            {
-                player.x += SIZE_PLAYER / 2;
-            }
-            else if (key[ALLEGRO_KEY_ESCAPE])
+            if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
 
-            else if (key[ALLEGRO_KEY_SPACE])
+            if (menu == TRUE)
             {
-                done = true;
+                if (key[ALLEGRO_KEY_SPACE])
+                {
+                    menu = FALSE;
+                }
+            }
+            else
+            {
+                /* enemy logic */
+                enemy->x += 10;
+
+                if (enemy->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN)
+                {
+                    enemy->x = MARGIN;
+                    enemy->y += SIZE_PLAYER;
+                }
+                // if (enemy->y == TOTAL_HEIGHT - SIZE_PLAYER - MARGIN)
+                // {
+                //     gameover = TRUE;
+                // }
+
+                /* player logic */
+                if (key[ALLEGRO_KEY_LEFT] && (player.x != MARGIN))
+                {
+                    player.x -= SIZE_PLAYER / 2;
+                }
+                else if (key[ALLEGRO_KEY_RIGHT] && player.x != TOTAL_WIDTH - SIZE_PLAYER - MARGIN)
+                {
+                    player.x += SIZE_PLAYER / 2;
+                }
             }
 
             for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
@@ -147,13 +173,20 @@ int main()
         if (redraw && al_is_event_queue_empty(queue))
         {
             al_clear_to_color(al_map_rgb(0, 0, 0));
-            al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "X: %.1f Y: %.1f", player.x, player.y);
-            al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 50, 0, "SCORE: %d", player.score);
 
-            al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, al_map_rgb(255, 0, 0));
+            if (menu)
+            {
+                al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 50, 0, "MENU");
+            }
+            else
+            {
+                al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "X: %.1f Y: %.1f", player.x, player.y);
+                al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 50, 0, "SCORE: %d", player.score);
 
-            al_draw_filled_rectangle(player.x, player.y, player.x + SIZE_PLAYER, player.y + SIZE_PLAYER, al_map_rgb(255, 255, 255));
+                al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, al_map_rgb(255, 0, 0));
 
+                al_draw_filled_rectangle(player.x, player.y, player.x + SIZE_PLAYER, player.y + SIZE_PLAYER, al_map_rgb(255, 255, 255));
+            }
             al_flip_display();
 
             redraw = false;
