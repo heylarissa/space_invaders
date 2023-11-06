@@ -3,6 +3,7 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
 
 #define KEY_SEEN 1
 #define KEY_RELEASED 2
@@ -75,12 +76,22 @@ int main()
 
     ALLEGRO_DISPLAY *disp = al_create_display(TOTAL_WIDTH, TOTAL_HEIGHT);
     must_init(disp, "display");
+    if (!al_init_font_addon())
+    {
+        fprintf(stderr, "Falha ao inicializar addon de fonte.\n");
+        return -1;
+    }
 
-    al_init_font_addon();
-    ALLEGRO_FONT *font = al_create_builtin_font();
-    font = al_load_font("VT323-Regular.ttf", 48, 0); // Substitua "sua_fonte.ttf" e 48 pelo seu arquivo TTF e tamanho desejado
+    if (!al_init_ttf_addon())
+    {
+        fprintf(stderr, "Falha ao inicializar addon TTF.\n");
+        return -1;
+    }
 
+    ALLEGRO_FONT *font = al_load_font("./assets/VT323-Regular.ttf", 48, 0);
+    ;
     must_init(font, "font");
+
     must_init(al_init_primitives_addon(), "primitives");
 
     al_register_event_source(queue, al_get_keyboard_event_source());
@@ -143,7 +154,7 @@ int main()
 
                 if ((enemy->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN) || (enemy->x == MARGIN))
                 {
-                    enemy->y += SIZE_PLAYER/2;
+                    enemy->y += SIZE_PLAYER / 2;
                     enemydirection = !enemydirection; // inverte a direção
                 }
 
