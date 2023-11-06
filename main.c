@@ -4,6 +4,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_image.h>
 
 #define KEY_SEEN 1
 #define KEY_RELEASED 2
@@ -14,6 +15,11 @@
 #define LEFT 0
 #define RIGHT 1
 
+#define GREEN al_map_rgb(52, 255, 0)
+#define WHITE al_map_rgb(255, 255, 255)
+#define RED al_map_rgb(255, 0, 0)
+#define BLACK al_map_rgb(0, 0, 0)
+
 #define HEIGHT_DISPLAY 800
 #define WIDTH_DISPLAY 1600
 #define MARGIN 100
@@ -21,6 +27,20 @@
 #define TOTAL_HEIGHT HEIGHT_DISPLAY + MARGIN
 
 #define SIZE_PLAYER 50
+
+typedef struct SPRITES_T
+{
+    ALLEGRO_BITMAP *_sheet;
+
+    ALLEGRO_BITMAP *redship;
+    ALLEGRO_BITMAP *aliens[6];
+    ALLEGRO_BITMAP *player;
+    ALLEGRO_BITMAP *shield[5];
+    ALLEGRO_BITMAP *spaceinvaderslogo;
+    ALLEGRO_BITMAP *explosion;
+    ALLEGRO_BITMAP *shot;
+
+} SPRITES;
 
 typedef struct shot
 {
@@ -58,6 +78,21 @@ void must_init(bool test, const char *description)
     printf("Couldn't initialize %s\n", description);
     exit(1);
 }
+// Seleciona a parte da imagem a ser cortada
+ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h)
+{
+    ALLEGRO_BITMAP *sprite = al_create_sub_bitmap(img, x, y, w, h);
+    must_init(sprite, "select sprite");
+    return sprite;
+}
+
+void init_sprites(SPRITES *sprites)
+{
+    sprites->_sheet = al_load_bitmap("./assets/sprites.png");
+    must_init(sprites->_sheet, "sprites");
+
+    sprites->spaceinvaderslogo = select_sprite(sprites->_sheet, 160, 0, (410 - 160), 170);
+}
 
 int main()
 {
@@ -76,23 +111,15 @@ int main()
 
     ALLEGRO_DISPLAY *disp = al_create_display(TOTAL_WIDTH, TOTAL_HEIGHT);
     must_init(disp, "display");
-    if (!al_init_font_addon())
-    {
-        fprintf(stderr, "Falha ao inicializar addon de fonte.\n");
-        return -1;
-    }
 
-    if (!al_init_ttf_addon())
-    {
-        fprintf(stderr, "Falha ao inicializar addon TTF.\n");
-        return -1;
-    }
+    must_init(al_init_font_addon(), "addon de fonte");
+    must_init(al_init_ttf_addon(), "addon de fonte ttf");
 
     ALLEGRO_FONT *font = al_load_font("./assets/VT323-Regular.ttf", 48, 0);
-    ;
     must_init(font, "font");
 
     must_init(al_init_primitives_addon(), "primitives");
+    must_init(al_init_image_addon(), "image addon");
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -120,7 +147,8 @@ int main()
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
-
+    SPRITES *sprites = malloc(sizeof(SPRITES));
+    init_sprites(sprites);
     al_start_timer(timer);
 
     while (1)
@@ -135,7 +163,7 @@ int main()
 
             if (menu == TRUE)
             {
-                if (key[ALLEGRO_KEY_SPACE])
+                if ((key[ALLEGRO_KEY_SPACE]) || (key[ALLEGRO_KEY_ENTER]))
                 {
                     menu = FALSE;
                 }
@@ -193,20 +221,23 @@ int main()
 
         if (redraw && al_is_event_queue_empty(queue))
         {
-            al_clear_to_color(al_map_rgb(0, 0, 0));
+            al_clear_to_color(BLACK);
 
             if (menu)
             {
-                al_draw_textf(font, al_map_rgb(255, 255, 255), WIDTH_DISPLAY / 2, HEIGHT_DISPLAY / 2, ALLEGRO_ALIGN_CENTER, "MENU");
+                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160)/2 , (TOTAL_HEIGHT) / 2 - 2*MARGIN, 0);
+
+                al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
+                al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
             }
             else
             {
-                al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 0, 0, "X: %.1f Y: %.1f", player.x, player.y);
-                al_draw_textf(font, al_map_rgb(255, 255, 255), 0, 50, 0, "SCORE: %d", player.score);
+                // al_draw_textf(font, WHITE, 0, 50, 0, "X: %.1f Y: %.1f", player.x, player.y); //DEBUG
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE: %d", player.score);
 
-                al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, al_map_rgb(255, 0, 0));
+                al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, RED);
 
-                al_draw_filled_rectangle(player.x, player.y, player.x + SIZE_PLAYER, player.y + SIZE_PLAYER, al_map_rgb(255, 255, 255));
+                al_draw_filled_rectangle(player.x, player.y, player.x + SIZE_PLAYER, player.y + SIZE_PLAYER, WHITE);
             }
             al_flip_display();
 
@@ -214,6 +245,12 @@ int main()
         }
     }
 
+    al_destroy_bitmap(sprites->_sheet);
+    al_destroy_bitmap(sprites->spaceinvaderslogo);
+    // al_destroy_bitmap(sprites->_sheet);
+    // al_destroy_bitmap(sprites->_sheet);
+
+    free(sprites);
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);
