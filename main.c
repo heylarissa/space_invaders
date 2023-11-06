@@ -28,12 +28,18 @@
 
 #define SIZE_PLAYER 50
 
+// player sprite will require two costumes, a regular one and a dead one
+// a sprite for the player, aliens, spaceship and bullets
 typedef struct SPRITES_T
 {
     ALLEGRO_BITMAP *_sheet;
 
-    ALLEGRO_BITMAP *redship;
-    ALLEGRO_BITMAP *aliens[6];
+    ALLEGRO_BITMAP *spaceship;
+
+    ALLEGRO_BITMAP *aliens_t1[2]; // Fracos, não atiram caso exista uma entidade à sua frente ou se já existir um projétil na coluna, causam um (1) de dano em obstáculos;
+    ALLEGRO_BITMAP *aliens_t2[2]; // Intermediários, não atiram caso exista um projétil na coluna, causam dois (2) de dano em obstáculos;
+    ALLEGRO_BITMAP *aliens_t3[2]; // Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois (2) de dano em obstáculos.
+
     ALLEGRO_BITMAP *player;
     ALLEGRO_BITMAP *shield[5];
     ALLEGRO_BITMAP *spaceinvaderslogo;
@@ -57,8 +63,7 @@ typedef struct player
     SHOT *shots; // lista de tiros ativos
 
 } PLAYER;
-// player sprite will require two costumes, a regular one and a dead one
-// a sprite for the player, aliens, spaceship and bullets
+
 typedef struct enemy // apenas 2 inimigos podem atirar
 {
     float x, y;
@@ -78,6 +83,7 @@ void must_init(bool test, const char *description)
     printf("Couldn't initialize %s\n", description);
     exit(1);
 }
+
 // Seleciona a parte da imagem a ser cortada
 ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h)
 {
@@ -92,6 +98,7 @@ void init_sprites(SPRITES *sprites)
     must_init(sprites->_sheet, "sprites");
 
     sprites->spaceinvaderslogo = select_sprite(sprites->_sheet, 160, 0, (410 - 160), 170);
+    sprites->spaceship = select_sprite(sprites->_sheet, 365, 770, (585 - 365), (870 - 770));
 }
 
 int main()
@@ -129,26 +136,36 @@ int main()
     bool redraw = true;
 
     ALLEGRO_EVENT event;
+    SPRITES *sprites = malloc(sizeof(SPRITES));
+    init_sprites(sprites);
 
     PLAYER player;
     player.x = WIDTH_DISPLAY / 2;
     player.y = HEIGHT_DISPLAY - SIZE_PLAYER;
     player.score = 0;
 
+    ENEMY *spaceship;
+    spaceship = malloc(sizeof(ENEMY));
+
+    spaceship->x = 0;
+    spaceship->y = MARGIN;
+    spaceship->size = al_get_bitmap_width(sprites->spaceship) * 0.5;
+
+    int spaceshipdirection = RIGHT;
+
     ENEMY *enemy;
     enemy = malloc(sizeof(ENEMY));
     enemy->size = SIZE_PLAYER;
     enemy->next = NULL;
     enemy->x = MARGIN;
-    enemy->y = 100 - SIZE_PLAYER;
+    enemy->y = 2 * MARGIN - SIZE_PLAYER + 20;
 
     int menu = TRUE;
     int enemydirection = LEFT;
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
-    SPRITES *sprites = malloc(sizeof(SPRITES));
-    init_sprites(sprites);
+
     al_start_timer(timer);
 
     while (1)
@@ -171,6 +188,21 @@ int main()
             else
             {
                 /* enemy logic */
+
+                if (spaceshipdirection == RIGHT)
+                {
+                    spaceship->x += 15;
+                }
+                else
+                {
+                    spaceship->x -= 15;
+                }
+
+                if ((spaceship->x == TOTAL_WIDTH - spaceship->size) || (spaceship->x == 0))
+                {
+                    spaceshipdirection = !spaceshipdirection;
+
+                }
                 if (enemydirection == LEFT)
                 {
                     enemy->x += 10;
@@ -225,7 +257,8 @@ int main()
 
             if (menu)
             {
-                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160)/2 , (TOTAL_HEIGHT) / 2 - 2*MARGIN, 0);
+
+                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
 
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
                 al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
@@ -233,11 +266,15 @@ int main()
             else
             {
                 // al_draw_textf(font, WHITE, 0, 50, 0, "X: %.1f Y: %.1f", player.x, player.y); //DEBUG
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE: %d", player.score);
-
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);
+                // desenhar vidas
+                al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
+                                      al_get_bitmap_width(sprites->spaceship),
+                                      al_get_bitmap_height(sprites->spaceship),
+                                      spaceship->x, spaceship->y, al_get_bitmap_width(sprites->spaceship) * 0.5, al_get_bitmap_height(sprites->spaceship) * 0.5, 0);
                 al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, RED);
-
                 al_draw_filled_rectangle(player.x, player.y, player.x + SIZE_PLAYER, player.y + SIZE_PLAYER, WHITE);
+                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5);
             }
             al_flip_display();
 
@@ -247,10 +284,12 @@ int main()
 
     al_destroy_bitmap(sprites->_sheet);
     al_destroy_bitmap(sprites->spaceinvaderslogo);
-    // al_destroy_bitmap(sprites->_sheet);
-    // al_destroy_bitmap(sprites->_sheet);
-
+    al_destroy_bitmap(sprites->spaceship);
     free(sprites);
+
+    free(spaceship);
+    free(enemy);
+
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);
