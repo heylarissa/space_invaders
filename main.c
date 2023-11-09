@@ -99,8 +99,29 @@ void init_sprites(SPRITES *sprites)
 
     sprites->spaceinvaderslogo = select_sprite(sprites->_sheet, 160, 0, (410 - 160), 170);
     sprites->spaceship = select_sprite(sprites->_sheet, 365, 770, (585 - 365), (870 - 770));
+    sprites->player = select_sprite(sprites->_sheet, 350, 1160, (460 - 350), (1228 - 1160));
+
+    sprites->aliens_t1[0] = select_sprite(sprites->_sheet, 370, 685, (470 - 360), (755 - 685));    // v1
+    sprites->aliens_t1[1] = select_sprite(sprites->_sheet, 480, 685, (585 - 350), (755 - 580)); // v1
+
+    sprites->aliens_t2[0] = select_sprite(sprites->_sheet, 380, 580, (475 - 380), (650 - 580)); // v2
+    sprites->aliens_t2[1] = select_sprite(sprites->_sheet, 385, 580, (580 - 385), (650 - 580)); // v2
+
+    sprites->aliens_t3[0] = select_sprite(sprites->_sheet, 395, 475, (547 - 395), (545 - 475)); // v3
+    sprites->aliens_t3[1] = select_sprite(sprites->_sheet, 495, 475, (565 - 495), (540 - 475)); // v3
 }
 
+void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
+{
+    int pos_x = 500;
+    int pos_y = 0;
+    al_draw_text(font, WHITE, 300, 0, 0, "LIVES ");
+    for (int i = 0; i < lives; i++)
+    {
+        pos_x = pos_x + al_get_bitmap_width(live);
+        al_draw_bitmap(live, pos_x, pos_y, 0);
+    }
+}
 int main()
 {
     must_init(al_init(), "allegro");
@@ -143,6 +164,7 @@ int main()
     player.x = WIDTH_DISPLAY / 2;
     player.y = HEIGHT_DISPLAY - SIZE_PLAYER;
     player.score = 0;
+    player.lives = 3;
 
     ENEMY *spaceship;
     spaceship = malloc(sizeof(ENEMY));
@@ -201,7 +223,6 @@ int main()
                 if ((spaceship->x == TOTAL_WIDTH - spaceship->size) || (spaceship->x == 0))
                 {
                     spaceshipdirection = !spaceshipdirection;
-
                 }
                 if (enemydirection == LEFT)
                 {
@@ -267,13 +288,15 @@ int main()
             {
                 // al_draw_textf(font, WHITE, 0, 50, 0, "X: %.1f Y: %.1f", player.x, player.y); //DEBUG
                 al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);
-                // desenhar vidas
+                draw_lives(player.lives, sprites->player, font);
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
                                       al_get_bitmap_width(sprites->spaceship),
                                       al_get_bitmap_height(sprites->spaceship),
                                       spaceship->x, spaceship->y, al_get_bitmap_width(sprites->spaceship) * 0.5, al_get_bitmap_height(sprites->spaceship) * 0.5, 0);
                 al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, RED);
-                al_draw_filled_rectangle(player.x, player.y, player.x + SIZE_PLAYER, player.y + SIZE_PLAYER, WHITE);
+                al_draw_bitmap(sprites->player, player.x, player.y, 0);
+                                al_draw_bitmap(sprites->aliens_t1[0], enemy->x, enemy->y, 0);
+
                 al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5);
             }
             al_flip_display();
