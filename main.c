@@ -86,17 +86,10 @@ void create_player_shot(PLAYER *p)
     SHOT *new;
     new = malloc(sizeof(SHOT));
     new->direction = UP;
-    new->x = p->x + p->w/2;
+    new->x = p->x + p->w / 2;
     new->y = p->y;
-    new->next = NULL;
-
-    if (p->shots == NULL)
-    {
-        p->shots = new;
-        return;
-    }
-
-    p->shots->next = new;
+    new->next = p->shots;
+    p->shots = new;
 }
 
 int main()
@@ -171,6 +164,7 @@ int main()
 
                 /* player logic */
                 update_player_shots(&player);
+
                 if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
                 {
                     player.x -= SIZE_PLAYER / 2;
@@ -181,7 +175,6 @@ int main()
                 }
                 else if (key[ALLEGRO_KEY_SPACE])
                 {
-                    // SHOOT
                     create_player_shot(&player);
                 }
             }
@@ -225,7 +218,9 @@ int main()
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
                                       al_get_bitmap_width(sprites->spaceship),
                                       al_get_bitmap_height(sprites->spaceship),
-                                      spaceship->x, spaceship->y, al_get_bitmap_width(sprites->spaceship) * 0.5, al_get_bitmap_height(sprites->spaceship) * 0.5, 0);
+                                      spaceship->x, spaceship->y,
+                                      al_get_bitmap_width(sprites->spaceship) * 0.5,
+                                      al_get_bitmap_height(sprites->spaceship) * 0.5, 0);
                 al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, RED);
                 al_draw_bitmap(sprites->player, player.x, player.y, 0);
                 al_draw_bitmap(sprites->aliens_t1[0], enemy->x, enemy->y, 0);
@@ -236,7 +231,7 @@ int main()
 
                 while (shot_aux != NULL)
                 {
-                    al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x + 5, shot_aux->y + 5, RED);
+                    al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x + 5, shot_aux->y + 10, WHITE);
                     shot_aux = shot_aux->next;
                 }
 
