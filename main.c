@@ -10,6 +10,69 @@
 #include "game.h"
 #include "enemies.h"
 
+void init_enemies(ENEMY *enemy)
+{
+    enemy->size = SIZE_PLAYER;
+    enemy->next = NULL;
+    enemy->x = MARGIN;
+    enemy->y = 2 * MARGIN - SIZE_PLAYER + 20;
+}
+
+void init_player(PLAYER *player, SPRITES *sprites)
+{
+    player->x = WIDTH_DISPLAY / 2;
+    player->y = HEIGHT_DISPLAY - SIZE_PLAYER;
+    player->score = 0;
+    player->lives = 3;
+    player->w = al_get_bitmap_width(sprites->player);
+    player->h = al_get_bitmap_height(sprites->player);
+}
+
+void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
+{
+    spaceship->x = 0;
+    spaceship->y = MARGIN;
+    spaceship->size = al_get_bitmap_width(sprites->spaceship) * 0.5;
+}
+void init_game(PLAYER *player, ENEMY *enemies, ENEMY *spaceship, SPRITES *sprites)
+{
+    init_sprites(sprites);
+    init_player(player, sprites);
+    init_spaceship(spaceship, sprites);
+    init_enemies(enemies);
+}
+
+void update_enemies(ENEMY *enemies, ENEMY *spaceship)
+{
+    if (spaceship->direction == RIGHT)
+    {
+        spaceship->x += 15;
+    }
+    else
+    {
+        spaceship->x -= 15;
+    }
+
+    if ((spaceship->x == TOTAL_WIDTH - spaceship->size) || (spaceship->x == 0))
+    {
+        spaceship->direction = !spaceship->direction;
+    }
+
+    if (enemies->direction == LEFT)
+    {
+        enemies->x += 10;
+    }
+    else
+    {
+        enemies->x -= 10;
+    }
+
+    if ((enemies->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN) || (enemies->x == MARGIN))
+    {
+        enemies->y += SIZE_PLAYER / 2;
+        enemies->direction = !enemies->direction; // inverte a direção
+    }
+}
 int main()
 {
     must_init(al_init(), "allegro");
@@ -27,7 +90,6 @@ int main()
 
     ALLEGRO_DISPLAY *disp = al_create_display(TOTAL_WIDTH, TOTAL_HEIGHT);
     must_init(disp, "display");
-
     must_init(al_init_font_addon(), "addon de fonte");
     must_init(al_init_ttf_addon(), "addon de fonte ttf");
 
@@ -45,33 +107,17 @@ int main()
     bool redraw = true;
 
     ALLEGRO_EVENT event;
-    SPRITES *sprites = malloc(sizeof(SPRITES));
-    init_sprites(sprites);
-
+    SPRITES *sprites = (SPRITES *)malloc(sizeof(SPRITES));
     PLAYER player;
-    player.x = WIDTH_DISPLAY / 2;
-    player.y = HEIGHT_DISPLAY - SIZE_PLAYER;
-    player.score = 0;
-    player.lives = 3;
-
-    ENEMY *spaceship;
-    spaceship = malloc(sizeof(ENEMY));
-
-    spaceship->x = 0;
-    spaceship->y = MARGIN;
-    spaceship->size = al_get_bitmap_width(sprites->spaceship) * 0.5;
-
-    int spaceshipdirection = RIGHT;
-
-    ENEMY *enemy;
-    enemy = malloc(sizeof(ENEMY));
-    enemy->size = SIZE_PLAYER;
-    enemy->next = NULL;
-    enemy->x = MARGIN;
-    enemy->y = 2 * MARGIN - SIZE_PLAYER + 20;
+    ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
+    ENEMY *enemy = (ENEMY *)malloc(sizeof(ENEMY));
+    init_game(&player, enemy, spaceship, sprites);
 
     int menu = TRUE;
-    int enemydirection = LEFT;
+
+    // REFATORAR
+    enemy->direction = LEFT;
+    spaceship->direction = RIGHT;
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -88,51 +134,21 @@ int main()
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
 
-            if (menu == TRUE)
+            if ((menu == TRUE) && ((key[ALLEGRO_KEY_SPACE]) || (key[ALLEGRO_KEY_ENTER])))
             {
-                if ((key[ALLEGRO_KEY_SPACE]) || (key[ALLEGRO_KEY_ENTER]))
-                {
-                    menu = FALSE;
-                }
+                menu = FALSE;
             }
             else
             {
                 /* enemy logic */
-
-                if (spaceshipdirection == RIGHT)
-                {
-                    spaceship->x += 15;
-                }
-                else
-                {
-                    spaceship->x -= 15;
-                }
-
-                if ((spaceship->x == TOTAL_WIDTH - spaceship->size) || (spaceship->x == 0))
-                {
-                    spaceshipdirection = !spaceshipdirection;
-                }
-                if (enemydirection == LEFT)
-                {
-                    enemy->x += 10;
-                }
-                else
-                {
-                    enemy->x -= 10;
-                }
-
-                if ((enemy->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN) || (enemy->x == MARGIN))
-                {
-                    enemy->y += SIZE_PLAYER / 2;
-                    enemydirection = !enemydirection; // inverte a direção
-                }
+                update_enemies(enemy, spaceship);
 
                 /* player logic */
-                if (key[ALLEGRO_KEY_LEFT] && (player.x != MARGIN))
+                if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
                 {
                     player.x -= SIZE_PLAYER / 2;
                 }
-                else if (key[ALLEGRO_KEY_RIGHT] && player.x != TOTAL_WIDTH - SIZE_PLAYER - MARGIN)
+                else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
                 {
                     player.x += SIZE_PLAYER / 2;
                 }
@@ -166,15 +182,13 @@ int main()
 
             if (menu)
             {
-
                 al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
-
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
                 al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
             }
             else
             {
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %f", player.x);
                 draw_lives(player.lives, sprites->player, font);
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
                                       al_get_bitmap_width(sprites->spaceship),
@@ -183,6 +197,11 @@ int main()
                 al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, RED);
                 al_draw_bitmap(sprites->player, player.x, player.y, 0);
                 al_draw_bitmap(sprites->aliens_t1[0], enemy->x, enemy->y, 0);
+
+                // desenha tiros do player
+                // desenha tiros dos inimigos
+                // se tiro atingiu player, imprime outra animação do player
+                // se tiro atingiu inimigo, imprime inimigo explodindo
 
                 al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5);
             }
@@ -195,8 +214,8 @@ int main()
     al_destroy_bitmap(sprites->_sheet);
     al_destroy_bitmap(sprites->spaceinvaderslogo);
     al_destroy_bitmap(sprites->spaceship);
-    free(sprites);
 
+    free(sprites);
     free(spaceship);
     free(enemy);
 

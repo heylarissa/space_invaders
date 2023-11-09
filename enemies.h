@@ -11,9 +11,10 @@ typedef struct enemy // apenas 2 inimigos podem atirar
     float x, y;
     int size;
     int r, g, b; // cor do inimigo
-    int type;    // existem 3 tipos de inimigos
+    int type;    // existem 3 tipos de inimigos + spaceship
     int alive;   // vivo?
     SHOT shot;   // tiro do inimigo - um por vez
+    int direction;
     struct enemy *next;
 } ENEMY;
 
