@@ -68,6 +68,7 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 #define UP 1
 #define DOWN -1
 
+
 void update_player_shots(PLAYER *p)
 {
     if (p->shots == NULL)
@@ -77,23 +78,47 @@ void update_player_shots(PLAYER *p)
     while (aux != NULL)
     {
         aux->y -= SIZE_PLAYER / 2;
+
+        if (aux->y == 0) {
+            
+        }
         aux = aux->next;
     }
 }
 
+bool shot_in_this_column(SHOT *shots, PLAYER p)
+{
+    SHOT *aux;
+    aux = shots;
+
+    while (aux != NULL)
+    {
+        if (aux->x == p.x) {
+            return TRUE;
+        }
+        aux = aux->next;
+    }
+
+    return FALSE;
+}
+
 void create_player_shot(PLAYER *p)
 {
-    SHOT *new;
-    new = malloc(sizeof(SHOT));
-    new->direction = UP;
-    new->x = p->x + p->w / 2;
-    new->y = p->y;
-    new->next = p->shots;
-    p->shots = new;
+    if (!shot_in_this_column(p->shots, *p))
+    {
+        SHOT *new;
+        new = malloc(sizeof(SHOT));
+        new->direction = UP;
+        new->x = p->x + p->w / 2;
+        new->y = p->y;
+        new->next = p->shots;
+        p->shots = new;
+    }
 }
 
 int main()
 {
+    // TODO: Refatorar toda a inicialização do allegro para uma única struct
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
