@@ -5,6 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
+
 #include "display.h"
 #include "player.h"
 #include "game.h"
@@ -16,16 +17,6 @@ void init_enemies(ENEMY *enemy)
     enemy->next = NULL;
     enemy->x = MARGIN;
     enemy->y = 2 * MARGIN - SIZE_PLAYER + 20;
-}
-
-void init_player(PLAYER *player, SPRITES *sprites)
-{
-    player->x = WIDTH_DISPLAY / 2;
-    player->y = HEIGHT_DISPLAY - SIZE_PLAYER;
-    player->score = 0;
-    player->lives = 3;
-    player->w = al_get_bitmap_width(sprites->player);
-    player->h = al_get_bitmap_height(sprites->player);
 }
 
 void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
@@ -73,6 +64,41 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
         enemies->direction = !enemies->direction; // inverte a direção
     }
 }
+
+#define UP 1
+#define DOWN -1
+
+void update_player_shots(PLAYER *p)
+{
+    if (p->shots == NULL)
+        return; // se não houver tiros, ignorar
+    SHOT *aux;
+    aux = p->shots;
+    while (aux != NULL)
+    {
+        aux->y -= SIZE_PLAYER / 2;
+        aux = aux->next;
+    }
+}
+
+void create_player_shot(PLAYER *p)
+{
+    SHOT *new;
+    new = malloc(sizeof(SHOT));
+    new->direction = UP;
+    new->x = p->x + p->w/2;
+    new->y = p->y;
+    new->next = NULL;
+
+    if (p->shots == NULL)
+    {
+        p->shots = new;
+        return;
+    }
+
+    p->shots->next = new;
+}
+
 int main()
 {
     must_init(al_init(), "allegro");
@@ -144,6 +170,7 @@ int main()
                 update_enemies(enemy, spaceship);
 
                 /* player logic */
+                update_player_shots(&player);
                 if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
                 {
                     player.x -= SIZE_PLAYER / 2;
@@ -151,6 +178,11 @@ int main()
                 else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
                 {
                     player.x += SIZE_PLAYER / 2;
+                }
+                else if (key[ALLEGRO_KEY_SPACE])
+                {
+                    // SHOOT
+                    create_player_shot(&player);
                 }
             }
 
@@ -199,6 +231,15 @@ int main()
                 al_draw_bitmap(sprites->aliens_t1[0], enemy->x, enemy->y, 0);
 
                 // desenha tiros do player
+                SHOT *shot_aux;
+                shot_aux = player.shots;
+
+                while (shot_aux != NULL)
+                {
+                    al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x + 5, shot_aux->y + 5, RED);
+                    shot_aux = shot_aux->next;
+                }
+
                 // desenha tiros dos inimigos
                 // se tiro atingiu player, imprime outra animação do player
                 // se tiro atingiu inimigo, imprime inimigo explodindo
