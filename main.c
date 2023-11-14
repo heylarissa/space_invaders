@@ -25,6 +25,7 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
     spaceship->y = MARGIN;
     spaceship->size = al_get_bitmap_width(sprites->spaceship) * 0.5;
 }
+
 void init_game(PLAYER *player, ENEMY *enemies, ENEMY *spaceship, SPRITES *sprites)
 {
     init_sprites(sprites);
@@ -80,6 +81,7 @@ void update_player_shots(PLAYER *p)
         aux->y -= SIZE_PLAYER / 2;
 
         if (aux->y == 0) {
+            // delete shots
             
         }
         aux = aux->next;
@@ -113,6 +115,7 @@ void create_player_shot(PLAYER *p)
         new->y = p->y;
         new->next = p->shots;
         p->shots = new;
+        free(new);
     }
 }
 
@@ -155,6 +158,7 @@ int main()
     PLAYER player;
     ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
     ENEMY *enemy = (ENEMY *)malloc(sizeof(ENEMY));
+    
     init_game(&player, enemy, spaceship, sprites);
 
     int menu = TRUE;
@@ -256,14 +260,14 @@ int main()
 
                 while (shot_aux != NULL)
                 {
-                    al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x + 5, shot_aux->y + 10, WHITE);
+                    al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x + 5, shot_aux->y + 20, WHITE);
                     shot_aux = shot_aux->next;
                 }
 
                 // desenha tiros dos inimigos
                 // se tiro atingiu player, imprime outra animação do player
                 // se tiro atingiu inimigo, imprime inimigo explodindo
-
+                // pros obstáculos usar uma imagem e só plotar o pixel quando o tiro atingir
                 al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5);
             }
             al_flip_display();
