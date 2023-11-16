@@ -4,12 +4,14 @@
 #include "player.h"
 #include "display.h"
 
-void init_enemies(ENEMY *enemy)
+void init_enemies(ENEMY *enemies)
 {
-    enemy->size = SIZE_PLAYER;
-    enemy->next = NULL;
-    enemy->x = MARGIN;
-    enemy->y = 2 * MARGIN - SIZE_PLAYER + 20;
+        enemies->direction = LEFT;
+
+    enemies->size = SIZE_PLAYER;
+    enemies->next = NULL;
+    enemies->x = MARGIN;
+    enemies->y = 2 * MARGIN - SIZE_PLAYER + 20;
 }
 
 void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
