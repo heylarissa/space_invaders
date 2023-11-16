@@ -67,7 +67,7 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 }
 
 #define UP 1
-#define DOWN -
+#define DOWN (-1)
 void delete_shot(int position, SHOT **head)
 {
     SHOT *temp = *head;
