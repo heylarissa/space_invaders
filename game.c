@@ -1,5 +1,7 @@
 #include "game.h"
 #include "display.h"
+#include "player.h"
+#include "enemies.h"
 
 void init_sprites(SPRITES *sprites)
 {
@@ -39,3 +41,6 @@ void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
         al_draw_bitmap(live, pos_x, pos_y, 0);
     }
 }
+
+
+

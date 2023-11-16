@@ -12,6 +12,8 @@
 #define LEFT 0
 #define RIGHT 1
 
+#define UP 1
+#define DOWN (-1)
 // player sprite will require two costumes, a regular one and a dead one
 // a sprite for the player, aliens, spaceship and bullets
 typedef struct SPRITES_T
@@ -43,5 +45,6 @@ typedef struct shot
 void init_sprites(SPRITES *sprites);
 ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h);
 void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font);
+void delete_shot(int position, SHOT **head);
 
 #endif

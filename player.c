@@ -1,5 +1,6 @@
 #include "display.h"
 #include "player.h"
+#include "shots.h"
 #include <stdlib.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
