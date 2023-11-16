@@ -67,21 +67,46 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 }
 
 #define UP 1
-#define DOWN -1
+#define DOWN -
+void delete_shot(int position, SHOT **head)
+{
+    SHOT *temp = *head;
+
+    if (position == 0)
+    {
+        *head = (*head)->next;
+        temp->next = NULL;
+        free(temp);
+    }
+    else
+    {
+        for (int i = 0; i < position - 1; i++)
+        {
+            temp = temp->next;
+        }
+
+        SHOT *del = temp->next;
+        temp->next = temp->next->next;
+        del->next = NULL;
+        free(del);
+    }
+}
 
 void update_player_shots(PLAYER *p)
 {
     if (p->shots == NULL)
         return; // se não houver tiros, ignorar
     SHOT *aux;
+    int i = -1;
     aux = p->shots;
     while (aux != NULL)
     {
+        i++;
         aux->y -= SIZE_PLAYER / 2;
 
-        if (aux->y == 0)
+        if (aux->y <= 0)
         {
-            // delete shots
+            delete_shot(i, &p->shots);
         }
         aux = aux->next;
     }
@@ -256,7 +281,7 @@ int main()
                 // desenha tiros do player
                 SHOT *shot_aux;
                 shot_aux = player.shots;
-                
+
                 while (shot_aux != NULL)
                 {
                     al_draw_textf(font, WHITE, 50, 200, 0, "SHOT %f %f", shot_aux->x, shot_aux->y);
