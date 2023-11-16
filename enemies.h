@@ -6,6 +6,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include "game.h"
+#include "player.h"
 typedef struct enemy // apenas 2 inimigos podem atirar
 {
     float x, y;
@@ -18,5 +19,8 @@ typedef struct enemy // apenas 2 inimigos podem atirar
     struct enemy *next;
 } ENEMY;
 
-
+void init_enemies(ENEMY *enemy);
+void init_spaceship(ENEMY *spaceship, SPRITES *sprites);
+void init_game(PLAYER *player, ENEMY *enemies, ENEMY *spaceship, SPRITES *sprites);
+void update_enemies(ENEMY *enemies, ENEMY *spaceship);
 #endif
