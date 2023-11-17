@@ -17,7 +17,7 @@ void init_game(PLAYER *player, ENEMY **enemies, ENEMY *spaceship, SPRITES *sprit
     init_sprites(sprites);
     init_player(player, sprites);
     init_spaceship(spaceship, sprites);
-    *enemies = init_enemies();
+    *enemies = init_enemies(sprites);
 }
 
 void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
