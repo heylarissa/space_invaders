@@ -106,26 +106,26 @@ void draw_enemies(ENEMY *enemies, SPRITES *sprites)
             if (aux->type == 1)
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t1[0], aux->x, aux->y, 3);
+                    scale_image(sprites->aliens_t1[0], aux->x, aux->y, 2);
 
                 else if (aux->state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t1[1], aux->x, aux->y, 3);
+                    scale_image(sprites->aliens_t1[1], aux->x, aux->y, 2);
             }
             else if (aux->type == 2)
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t2[0], aux->x, aux->y, 3);
+                    scale_image(sprites->aliens_t2[0], aux->x, aux->y, 2);
 
                 else if (aux->state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t2[1], aux->x, aux->y, 3);
+                    scale_image(sprites->aliens_t2[1], aux->x, aux->y, 2);
             }
             else
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t3[0], aux->x, aux->y, 3);
+                    scale_image(sprites->aliens_t3[0], aux->x, aux->y, 2);
 
                 else if (aux->state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t3[1], aux->x, aux->y, 3);
+                    scale_image(sprites->aliens_t3[1], aux->x, aux->y, 2);
             }
         }
 
@@ -299,7 +299,11 @@ void update_enemies_shots(ENEMY *enemies)
             //     // Trata a colisão com o jogador
             //     // ... (coloque aqui o código para tratar a colisão do tiro inimigo com o jogador)
             // }
+
+            if (aux->shots->y >= TOTAL_HEIGHT)
+                aux->shots = NULL;
         }
+
         aux = aux->next;
     }
 

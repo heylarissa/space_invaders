@@ -94,38 +94,32 @@ int main()
             }
             else
             {
-                if (event.timer.source == timer)
+                frame_count++;
+                update_enemies_shots(enemies);
+
+                /* player logic */
+                update_player_shots(&player);
+
+                if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
                 {
-                    frame_count++;
-
-                    /* player logic */
-                    update_player_shots(&player);
-
-                    if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
-                    {
-                        player.x -= SIZE_PLAYER / 2;
-                    }
-                    else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
-                    {
-                        player.x += SIZE_PLAYER / 2;
-                    }
-                    else if (key[ALLEGRO_KEY_SPACE])
-                    {
-                        create_player_shot(&player);
-                    }
+                    player.x -= SIZE_PLAYER / 2;
                 }
-                else if (event.timer.source == enemies_timer)
+                else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
                 {
-                    /* enemy logic */
-                    update_enemies_shots(enemies);
+                    player.x += SIZE_PLAYER / 2;
+                }
+                else if (key[ALLEGRO_KEY_SPACE])
+                {
+                    create_player_shot(&player);
+                }
+                /* enemy logic */
 
-                    if (frame_count % 10 == 0)
-                    {
-                        update_enemies(enemies, spaceship);
+                if (frame_count % 30 == 0)
+                {
+                    update_enemies(enemies, spaceship);
 
-                        if (enemies->y >= TOTAL_HEIGHT)
-                            done = TRUE; // se chegar na borda inferior
-                    }
+                    if (enemies->y >= TOTAL_HEIGHT)
+                        done = TRUE; // se chegar na borda inferior
                 }
             }
 
