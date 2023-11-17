@@ -23,7 +23,7 @@ void init_game(PLAYER *player, ENEMY **enemies, ENEMY *spaceship, SPRITES *sprit
 void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
 {
     al_draw_bitmap(sprites->player, player.x, player.y, 0);
-    draw_player_shots(player.shots, font);
+    draw_player_shots(player.shots);
 }
 
 int main()
@@ -71,8 +71,8 @@ int main()
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
-    ALLEGRO_TIMER *enemies_timer = al_create_timer(1.0 / 20.0);                // Timer para os inimigos (20 frames por segundo)
-    al_register_event_source(queue, al_get_timer_event_source(enemies_timer)); // Registra o timer dos inimigos na fila de eventos
+    ALLEGRO_TIMER *enemies_timer = al_create_timer(1.0 / 20.0);
+    al_register_event_source(queue, al_get_timer_event_source(enemies_timer));
     int frame_count = 0;
 
     al_start_timer(enemies_timer);
@@ -120,6 +120,9 @@ int main()
                     if (frame_count % 10 == 0)
                     {
                         update_enemies(enemies, spaceship);
+
+                        if (enemies->y >= TOTAL_HEIGHT)
+                            done = TRUE; // se chegar na borda inferior
                     }
                 }
             }
@@ -174,7 +177,7 @@ int main()
 
                 // desenha player
                 al_draw_bitmap(sprites->player, player.x, player.y, 0);
-                draw_player_shots(player.shots, font);
+                draw_player_shots(player.shots);
 
                 // desenha tiros dos inimigos
                 // se tiro atingiu player, imprime outra animação do player
@@ -194,6 +197,15 @@ int main()
 
     free(sprites);
     free(spaceship);
+
+    ENEMY *aux;
+    aux = enemies;
+
+    while (aux != NULL)
+    {
+        free(aux->shots);
+        aux = aux->next;
+    }
     free(enemies);
 
     al_destroy_font(font);

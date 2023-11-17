@@ -12,7 +12,7 @@
 #include "enemies.h"
 #include "shots.h"
 
-void draw_player_shots(SHOT *shots, ALLEGRO_FONT *font)
+void draw_player_shots(SHOT *shots)
 {
     // desenha tiros do player
     SHOT *shot_aux;

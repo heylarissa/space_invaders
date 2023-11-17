@@ -15,7 +15,6 @@
 #define ENEMY_SPACING 50
 #define NUM_ENEMIES_LINES 5
 #define ENEMIES_PER_LINE 11
-#define ENEMY_DESLOC (TOTAL_WIDTH / 4)
 #define ENEMY_SPEED 30
 
 #define SIZE_ENEMY 25
@@ -42,5 +41,7 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites);
 void update_enemies(ENEMY *enemies, ENEMY *spaceship);
 void draw_enemies(ENEMY *enemies, SPRITES *sprites);
 int get_enemy_type(int line);
+void move_enemies(ENEMY *enemies);
+void move_red_spaceship(ENEMY *spaceship);
 
 #endif

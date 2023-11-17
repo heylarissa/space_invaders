@@ -5,6 +5,7 @@
 #include "enemies.h"
 #include "shots.h"
 #include "utils.h"
+#include <time.h>
 
 int get_enemy_type(int line)
 {
@@ -88,12 +89,17 @@ ENEMY *init_enemies(SPRITES *sprites)
     return enemies;
 }
 
+void draw_enemies_shots(SHOT shot_aux)
+{
+    al_draw_filled_rectangle(shot_aux.x, shot_aux.y, shot_aux.x + 5, shot_aux.y + 20, WHITE);
+}
 void draw_enemies(ENEMY *enemies, SPRITES *sprites)
 {
     ENEMY *aux;
     aux = enemies;
     for (int i = 0; i < (ENEMIES_PER_LINE * NUM_ENEMIES_LINES); i++)
     {
+        //draw_enemies_shots(*aux->shots);
         if (aux->state != DEAD_ENEMY)
         {
             if (aux->type == 1)
@@ -137,23 +143,11 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
     spaceship->direction = RIGHT;
 }
 
-void update_enemies(ENEMY *enemies, ENEMY *spaceship)
+void move_enemies(ENEMY *enemies)
 {
-    if (spaceship->direction == RIGHT)
-    {
-        spaceship->x += 3 * ENEMY_SPEED;
-    }
-    else
-    {
-        spaceship->x -= 3 * ENEMY_SPEED;
-    }
-
-    if ((spaceship->x >= TOTAL_WIDTH - spaceship->width) || (spaceship->x <= 0))
-    {
-        spaceship->direction = !spaceship->direction;
-    }
-
     ENEMY *aux = enemies;
+
+    /* Muda a linha dos inimigos quando necessário */
     while (aux != NULL)
     {
         aux->state = !aux->state;
@@ -173,7 +167,7 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
         aux = aux->next;
     }
 
-    // Movimento dos inimigos
+    /* Atualiza o local dos inimigos */
     aux = enemies;
     while (aux != NULL)
     {
@@ -188,4 +182,130 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 
         aux = aux->next;
     }
+}
+
+/* Atualiza nave vermelha inimiga */
+void move_red_spaceship(ENEMY *spaceship)
+{
+    if (spaceship->direction == RIGHT)
+    {
+        spaceship->x += 3 * ENEMY_SPEED;
+    }
+    else
+    {
+        spaceship->x -= 3 * ENEMY_SPEED;
+    }
+
+    if ((spaceship->x >= TOTAL_WIDTH - spaceship->width) || (spaceship->x <= 0))
+    {
+        spaceship->direction = !spaceship->direction;
+    }
+}
+
+/* Cria o tiro do inimigo */
+void set_shooting_ability(ENEMY *enemies, int chosen)
+{
+    int i;
+
+    ENEMY *aux;
+
+    aux = enemies;
+    i = 0;
+
+    while (aux != NULL && i != chosen) // vai até o final da lista ou até encontrar o indice
+    {
+        aux = aux->next;
+    }
+
+    if (aux != NULL)
+    {
+        // Cria tiro inimigo
+        aux->shots = malloc(sizeof(SHOT));
+        aux->shots->direction = DOWN;
+        aux->shots->next = NULL;
+        aux->shots->x = aux->x + aux->width / 2; // atira a partir do meio do inimigo
+        aux->shots->y = aux->y;
+    }
+}
+
+/* Retorna TRUE se o indice já tiver sido escolhido*/
+int contains(int chosen[2], int index)
+{
+    if (chosen[0] == index || chosen[1] == index)
+        return TRUE;
+
+    return FALSE;
+}
+
+/* Escolhe quais inimigos irão atirar */
+void choose_shoot_enemies(ENEMY *enemies)
+{
+    int total_enemies = ENEMIES_PER_LINE * NUM_ENEMIES_LINES;
+
+    int chosen[2];
+    srand((unsigned int)time(NULL));
+
+    // Escolhe aleatoriamente os índices dos inimigos que atirarão
+    for (int i = 0; i < 2; i++)
+    {
+        int randomIndex;
+
+        // Garante que o índice escolhido seja único
+        do
+        {
+            randomIndex = rand() % total_enemies;
+        } while (contains(chosen, randomIndex));
+
+        // Adiciona o índice escolhido à lista vinculada
+        chosen[i] = randomIndex;
+
+        // Define a capacidade de atirar para verdadeiro no inimigo correspondente
+        set_shooting_ability(enemies, chosen[i]);
+    }
+}
+
+/* Retorna se existem tiros ativos na lista de inimigos */
+int no_enemy_active_shot(ENEMY *enemies)
+{
+    ENEMY *aux;
+    aux = enemies;
+
+    while (aux != NULL)
+    {
+        if (aux->shots != NULL)
+        {
+            return FALSE;
+        }
+        aux = aux->next;
+    }
+
+    return TRUE;
+}
+
+/* Atualiza posição dos tiros inimigos */
+void update_enemies_shots(ENEMY *enemies)
+{
+    ENEMY *aux;
+    aux = enemies;
+
+    while (aux != NULL)
+    {
+        if (aux->shots != NULL)
+        {
+            aux->shots->y += aux->height / 2;
+        }
+        aux = aux->next;
+    }
+
+    if (no_enemy_active_shot(enemies))
+        choose_shoot_enemies(enemies);
+}
+
+/* Atualiza posição de inimigos e seus tiros */
+void update_enemies(ENEMY *enemies, ENEMY *spaceship)
+{
+    move_red_spaceship(spaceship);
+    move_enemies(enemies);
+
+    update_enemies_shots(enemies);
 }
