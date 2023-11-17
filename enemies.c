@@ -164,7 +164,7 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
             ENEMY *temp = enemies;
             while (temp != NULL)
             {
-                temp->y += ENEMY_SPEED;
+                temp->y += ENEMY_SPEED/3;
                 temp->direction = !temp->direction; // inverte a direção
 
                 temp = temp->next;
