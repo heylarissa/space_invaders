@@ -160,11 +160,10 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 
         if ((aux->x >= TOTAL_WIDTH - aux->width) || (aux->x < 0)) // encosta na borda
         {
-            // Ajusta todos os inimigos com base neste inimigo específico
             ENEMY *temp = enemies;
             while (temp != NULL)
             {
-                temp->y += ENEMY_SPEED/3;
+                temp->y += ENEMY_SPEED / 3;
                 temp->direction = !temp->direction; // inverte a direção
 
                 temp = temp->next;
