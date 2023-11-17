@@ -117,6 +117,8 @@ int main()
                 else if (event.timer.source == enemies_timer)
                 {
                     /* enemy logic */
+                    update_enemies_shots(enemies);
+
                     if (frame_count % 10 == 0)
                     {
                         update_enemies(enemies, spaceship);

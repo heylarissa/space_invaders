@@ -89,42 +89,43 @@ ENEMY *init_enemies(SPRITES *sprites)
     return enemies;
 }
 
-void draw_enemies_shots(SHOT shot_aux)
+void draw_enemies_shots(SHOT *shot_aux)
 {
-    al_draw_filled_rectangle(shot_aux.x, shot_aux.y, shot_aux.x + 5, shot_aux.y + 20, WHITE);
+    if (shot_aux != NULL)
+        al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x - 5, shot_aux->y - 20, WHITE);
 }
 void draw_enemies(ENEMY *enemies, SPRITES *sprites)
 {
     ENEMY *aux;
     aux = enemies;
-    for (int i = 0; i < (ENEMIES_PER_LINE * NUM_ENEMIES_LINES); i++)
+    while (aux != NULL)
     {
-        //draw_enemies_shots(*aux->shots);
+        draw_enemies_shots(aux->shots);
         if (aux->state != DEAD_ENEMY)
         {
             if (aux->type == 1)
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t1[0], aux->x, aux->y, 2);
+                    scale_image(sprites->aliens_t1[0], aux->x, aux->y, 3);
 
                 else if (aux->state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t1[1], aux->x, aux->y, 2);
+                    scale_image(sprites->aliens_t1[1], aux->x, aux->y, 3);
             }
             else if (aux->type == 2)
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t2[0], aux->x, aux->y, 2);
+                    scale_image(sprites->aliens_t2[0], aux->x, aux->y, 3);
 
                 else if (aux->state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t2[1], aux->x, aux->y, 2);
+                    scale_image(sprites->aliens_t2[1], aux->x, aux->y, 3);
             }
             else
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t3[0], aux->x, aux->y, 2);
+                    scale_image(sprites->aliens_t3[0], aux->x, aux->y, 3);
 
                 else if (aux->state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t3[1], aux->x, aux->y, 2);
+                    scale_image(sprites->aliens_t3[1], aux->x, aux->y, 3);
             }
         }
 
@@ -292,7 +293,7 @@ void update_enemies_shots(ENEMY *enemies)
     {
         if (aux->shots != NULL)
         {
-            aux->shots->y += aux->height / 2;
+            aux->shots->y += aux->height;
         }
         aux = aux->next;
     }
@@ -306,6 +307,4 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 {
     move_red_spaceship(spaceship);
     move_enemies(enemies);
-
-    update_enemies_shots(enemies);
 }
