@@ -218,7 +218,7 @@ void set_shooting_ability(ENEMY *enemies, int chosen)
         aux = aux->next;
     }
 
-    if (aux != NULL)
+    if (aux != NULL && aux->shots == NULL)
     {
         // Cria tiro inimigo
         aux->shots = malloc(sizeof(SHOT));
@@ -294,6 +294,11 @@ void update_enemies_shots(ENEMY *enemies)
         if (aux->shots != NULL)
         {
             aux->shots->y += aux->height;
+            //           if (check_collision(aux->shots->x, aux->shots->y, ENEMY_SHOT_SIZE, ENEMY_SHOT_SIZE, player->x, player->y, SIZE_PLAYER, SIZE_PLAYER))
+            // {
+            //     // Trata a colisão com o jogador
+            //     // ... (coloque aqui o código para tratar a colisão do tiro inimigo com o jogador)
+            // }
         }
         aux = aux->next;
     }
