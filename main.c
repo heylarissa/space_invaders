@@ -117,7 +117,7 @@ int main()
                 else if (event.timer.source == enemies_timer)
                 {
                     /* enemy logic */
-                    if (frame_count % 5 == 0) // Ajuste o valor (10) para o atraso desejado
+                    if (frame_count % 10 == 0)
                     {
                         update_enemies(enemies, spaceship);
                     }

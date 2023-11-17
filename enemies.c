@@ -100,6 +100,7 @@ void draw_enemies(ENEMY *enemies, SPRITES *sprites)
             {
                 if (aux->state == ENEMY_STATE_ONE)
                     scale_image(sprites->aliens_t1[0], aux->x, aux->y, 2);
+
                 else if (aux->state == ENEMY_STATE_TWO)
                     scale_image(sprites->aliens_t1[1], aux->x, aux->y, 2);
             }
@@ -107,6 +108,7 @@ void draw_enemies(ENEMY *enemies, SPRITES *sprites)
             {
                 if (aux->state == ENEMY_STATE_ONE)
                     scale_image(sprites->aliens_t2[0], aux->x, aux->y, 2);
+
                 else if (aux->state == ENEMY_STATE_TWO)
                     scale_image(sprites->aliens_t2[1], aux->x, aux->y, 2);
             }
@@ -114,6 +116,7 @@ void draw_enemies(ENEMY *enemies, SPRITES *sprites)
             {
                 if (aux->state == ENEMY_STATE_ONE)
                     scale_image(sprites->aliens_t3[0], aux->x, aux->y, 2);
+
                 else if (aux->state == ENEMY_STATE_TWO)
                     scale_image(sprites->aliens_t3[1], aux->x, aux->y, 2);
             }
@@ -138,23 +141,43 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 {
     if (spaceship->direction == RIGHT)
     {
-        spaceship->x += 2 * ENEMY_SPEED;
+        spaceship->x += 3 * ENEMY_SPEED;
     }
     else
     {
-        spaceship->x -= 2 * ENEMY_SPEED;
+        spaceship->x -= 3 * ENEMY_SPEED;
     }
 
-    if ((spaceship->x == TOTAL_WIDTH - spaceship->width) || (spaceship->x == 0))
+    if ((spaceship->x >= TOTAL_WIDTH - spaceship->width) || (spaceship->x <= 0))
     {
         spaceship->direction = !spaceship->direction;
     }
 
-    ENEMY *aux;
-    aux = enemies;
+    ENEMY *aux = enemies;
     while (aux != NULL)
     {
         aux->state = !aux->state;
+
+        if ((aux->x >= TOTAL_WIDTH - aux->width) || (aux->x < 0)) // encosta na borda
+        {
+            // Ajusta todos os inimigos com base neste inimigo específico
+            ENEMY *temp = enemies;
+            while (temp != NULL)
+            {
+                temp->y += ENEMY_SPEED;
+                temp->direction = !temp->direction; // inverte a direção
+
+                temp = temp->next;
+            }
+        }
+
+        aux = aux->next;
+    }
+
+    // Movimento dos inimigos
+    aux = enemies;
+    while (aux != NULL)
+    {
         if (aux->direction == LEFT)
         {
             aux->x += ENEMY_SPEED;
@@ -162,20 +185,6 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
         else
         {
             aux->x -= ENEMY_SPEED;
-        }
-
-        if ((aux->x >= TOTAL_WIDTH - aux->width) || (aux->x <= 0)) // encosta na borda
-        {
-            ENEMY *temp;
-            temp = enemies;
-
-            while (temp != NULL)
-            {
-                temp->y += 2 * ENEMY_SPEED;
-                temp->direction = !temp->direction; // inverte a direção
-
-                temp = temp->next;
-            }
         }
 
         aux = aux->next;
