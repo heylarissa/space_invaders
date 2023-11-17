@@ -32,7 +32,7 @@ ENEMY *init_enemies()
 {
     ENEMY *enemies = NULL;
     ENEMY *prev = NULL;
-    float height = 2 * MARGIN - SIZE_PLAYER + 20;
+    float height = 2 * MARGIN - SIZE_ENEMY + 20;
     for (int line = 0; line < NUM_ENEMIES_LINES; line++)
     {
         int type = get_enemy_type(line);
@@ -57,7 +57,7 @@ ENEMY *init_enemies()
             if (prev != NULL)
                 new_enemy->x = prev->x + SIZE_ENEMY + ENEMY_SPACING;
             else
-                new_enemy->x = MARGIN; // Valor inicial se prev for NULL
+                new_enemy->x = 0; // Valor inicial se prev for NULL
 
             new_enemy->alive = TRUE;
             new_enemy->line = line;
@@ -78,8 +78,8 @@ ENEMY *init_enemies()
 
             prev = new_enemy;
         }
-
-        height = height + 50;
+        prev = NULL;
+        height = height + 90;
     }
     return enemies;
     // enemies->direction = LEFT;

@@ -12,7 +12,7 @@
 #include "enemies.h"
 #include "shots.h"
 
-#define ENEMY_SPACING 20
+#define ENEMY_SPACING 70
 #define NUM_ENEMIES_LINES 5
 #define ENEMIES_PER_LINE 11
 #define ENEMY_DESLOC (TOTAL_WIDTH / 4)

@@ -28,13 +28,29 @@ void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
 
 void draw_enemies(ENEMY *enemies, SPRITES *sprites)
 {
-    // ENEMY *aux;
-    // for (int i = 0; i < ENEMIES_PER_LINE; i++)
-    // {
-    //     if (aux->state != DEAD_ENEMY)
-    //         aux = aux->next;
-    // }
-    al_draw_bitmap(sprites->aliens_t1[0], enemies->x, enemies->y, 0);
+    ENEMY *aux;
+    aux = enemies;
+    for (int i = 0; i < (ENEMIES_PER_LINE*NUM_ENEMIES_LINES); i++)
+    {
+        if (aux->state != DEAD_ENEMY)
+        {
+            if (aux->type == 1)
+            {
+                al_draw_bitmap(sprites->aliens_t1[0], aux->x, aux->y, 0);
+            }
+            else if (aux->type == 2)
+            {
+                al_draw_bitmap(sprites->aliens_t2[0], aux->x, aux->y, 0);
+            }
+            else
+            {
+                al_draw_bitmap(sprites->aliens_t3[0], aux->x, aux->y, 0);
+            }
+        }
+
+        aux = aux->next;
+    }
+    // al_draw_bitmap(sprites->aliens_t1[0], enemies->x, enemies->y, 0);
 }
 
 int main()
