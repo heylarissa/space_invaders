@@ -7,10 +7,35 @@
 #include <allegro5/allegro_image.h>
 
 #include "display.h"
-#include "player.h"
 #include "game.h"
+#include "player.h"
 #include "enemies.h"
 #include "shots.h"
+
+void init_game(PLAYER *player, ENEMY **enemies, ENEMY *spaceship, SPRITES *sprites)
+{
+    init_sprites(sprites);
+    init_player(player, sprites);
+    init_spaceship(spaceship, sprites);
+    *enemies = init_enemies();
+}
+
+void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
+{
+    al_draw_bitmap(sprites->player, player.x, player.y, 0);
+    draw_player_shots(player.shots, font);
+}
+
+void draw_enemies(ENEMY *enemies, SPRITES *sprites)
+{
+    // ENEMY *aux;
+    // for (int i = 0; i < ENEMIES_PER_LINE; i++)
+    // {
+    //     if (aux->state != DEAD_ENEMY)
+    //         aux = aux->next;
+    // }
+    al_draw_bitmap(sprites->aliens_t1[0], enemies->x, enemies->y, 0);
+}
 
 int main()
 {
@@ -45,20 +70,15 @@ int main()
 
     bool done = false;
     bool redraw = true;
+    int menu = TRUE;
 
     ALLEGRO_EVENT event;
     SPRITES *sprites = (SPRITES *)malloc(sizeof(SPRITES));
     PLAYER player;
     ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
-    ENEMY *enemy = (ENEMY *)malloc(sizeof(ENEMY));
+    ENEMY *enemies = NULL;
 
-    init_game(&player, enemy, spaceship, sprites);
-
-    int menu = TRUE;
-
-    // REFATORAR
-    enemy->direction = LEFT;
-    spaceship->direction = RIGHT;
+    init_game(&player, &enemies, spaceship, sprites);
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -82,7 +102,7 @@ int main()
             else
             {
                 /* enemy logic */
-                update_enemies(enemy, spaceship);
+                // update_enemies(enemies, spaceship);
 
                 /* player logic */
                 update_player_shots(&player);
@@ -135,29 +155,23 @@ int main()
             }
             else
             {
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %f", player.x);
-                draw_lives(player.lives, sprites->player, font);
+                // desenha tela
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %f", player.x); // score do player
+                draw_lives(player.lives, sprites->player, font);           // vidas do player
+
+                // desenha inimigos
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
                                       al_get_bitmap_width(sprites->spaceship),
                                       al_get_bitmap_height(sprites->spaceship),
                                       spaceship->x, spaceship->y,
                                       al_get_bitmap_width(sprites->spaceship) * 0.5,
-                                      al_get_bitmap_height(sprites->spaceship) * 0.5, 0);
-                al_draw_filled_rectangle(enemy->x, enemy->y, enemy->x + SIZE_PLAYER, enemy->y + SIZE_PLAYER, RED);
+                                      al_get_bitmap_height(sprites->spaceship) * 0.5, 0); // desenha nave vermelha
+
+                draw_enemies(enemies, sprites);
+
+                // desenha player
                 al_draw_bitmap(sprites->player, player.x, player.y, 0);
-                al_draw_bitmap(sprites->aliens_t1[0], enemy->x, enemy->y, 0);
-
-                // desenha tiros do player
-                SHOT *shot_aux;
-                shot_aux = player.shots;
-
-                while (shot_aux != NULL)
-                {
-                    al_draw_textf(font, WHITE, 50, 200, 0, "SHOT %f %f", shot_aux->x, shot_aux->y);
-
-                    al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x + 5, shot_aux->y + 20, WHITE);
-                    shot_aux = shot_aux->next;
-                }
+                draw_player_shots(player.shots, font);
 
                 // desenha tiros dos inimigos
                 // se tiro atingiu player, imprime outra animação do player
@@ -177,7 +191,7 @@ int main()
 
     free(sprites);
     free(spaceship);
-    free(enemy);
+    free(enemies);
 
     al_destroy_font(font);
     al_destroy_display(disp);

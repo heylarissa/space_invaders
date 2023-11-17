@@ -3,6 +3,8 @@
 #include "player.h"
 #include "enemies.h"
 
+
+
 void init_sprites(SPRITES *sprites)
 {
     sprites->_sheet = al_load_bitmap("./assets/sprites.png");

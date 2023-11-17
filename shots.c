@@ -12,6 +12,20 @@
 #include "enemies.h"
 #include "shots.h"
 
+void draw_player_shots(SHOT *shots, ALLEGRO_FONT *font)
+{
+    // desenha tiros do player
+    SHOT *shot_aux;
+    shot_aux = shots;
+
+    while (shot_aux != NULL)
+    {
+        al_draw_textf(font, WHITE, 50, 200, 0, "SHOT %f %f", shot_aux->x, shot_aux->y);
+
+        al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x + 5, shot_aux->y + 20, WHITE);
+        shot_aux = shot_aux->next;
+    }
+}
 
 bool shot_in_this_column(SHOT *shots, PLAYER p)
 {
