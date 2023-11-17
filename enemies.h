@@ -39,4 +39,6 @@ typedef struct enemy // apenas 2 inimigos podem atirar
 ENEMY *init_enemies();
 void init_spaceship(ENEMY *spaceship, SPRITES *sprites);
 void update_enemies(ENEMY *enemies, ENEMY *spaceship);
+void draw_enemies(ENEMY *enemies, SPRITES *sprites);
+
 #endif

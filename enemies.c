@@ -12,18 +12,15 @@ void create_enemy(ENEMY *enemies, ENEMY *new)
 int get_enemy_type(int line)
 {
     int type;
+
     if (line == 0)
-    {
         type = 3; // strong
-    }
+
     else if (line == 1 || line == 2)
-    {
         type = 2; // intermediate
-    }
+
     else
-    {
         type = 1; // weak
-    }
 
     return type;
 }
@@ -79,14 +76,44 @@ ENEMY *init_enemies()
             prev = new_enemy;
         }
         prev = NULL;
-        height = height + 90;
+        height = height + ENEMY_SPACING;
     }
     return enemies;
-    // enemies->direction = LEFT;
-    // enemies->size = SIZE_PLAYER;
-    // enemies->next = NULL;
-    // enemies->x = MARGIN;
-    // enemies->y = 2 * MARGIN - SIZE_PLAYER + 20;
+}
+
+void draw_enemies(ENEMY *enemies, SPRITES *sprites)
+{
+    ENEMY *aux;
+    aux = enemies;
+    for (int i = 0; i < (ENEMIES_PER_LINE * NUM_ENEMIES_LINES); i++)
+    {
+        if (aux->state != DEAD_ENEMY)
+        {
+            if (aux->type == 1)
+            {
+                if (aux->state == ENEMY_STATE_ONE)
+                    al_draw_bitmap(sprites->aliens_t1[0], aux->x, aux->y, 0);
+                else if (aux->state == ENEMY_STATE_TWO)
+                    al_draw_bitmap(sprites->aliens_t1[1], aux->x, aux->y, 0);
+            }
+            else if (aux->type == 2)
+            {
+                if (aux->state == ENEMY_STATE_ONE)
+                    al_draw_bitmap(sprites->aliens_t2[0], aux->x, aux->y, 0);
+                else if (aux->state == ENEMY_STATE_TWO)
+                    al_draw_bitmap(sprites->aliens_t2[1], aux->x, aux->y, 0);
+            }
+            else
+            {
+                if (aux->state == ENEMY_STATE_ONE)
+                    al_draw_bitmap(sprites->aliens_t3[0], aux->x, aux->y, 0);
+                else if (aux->state == ENEMY_STATE_TWO)
+                    al_draw_bitmap(sprites->aliens_t3[1], aux->x, aux->y, 0);
+            }
+        }
+
+        aux = aux->next;
+    }
 }
 
 void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
@@ -97,7 +124,6 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
     spaceship->next = NULL;
     spaceship->direction = RIGHT;
 }
-
 
 void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 {
