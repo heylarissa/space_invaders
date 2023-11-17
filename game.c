@@ -3,8 +3,6 @@
 #include "player.h"
 #include "enemies.h"
 
-
-
 void init_sprites(SPRITES *sprites)
 {
     sprites->_sheet = al_load_bitmap("./assets/sprites.png");
@@ -14,14 +12,14 @@ void init_sprites(SPRITES *sprites)
     sprites->spaceship = select_sprite(sprites->_sheet, 365, 770, (585 - 365), (870 - 770));
     sprites->player = select_sprite(sprites->_sheet, 350, 1160, (460 - 350), (1228 - 1160));
 
-    sprites->aliens_t1[0] = select_sprite(sprites->_sheet, 370, 685, (470 - 360), (755 - 685)); // v1
-    sprites->aliens_t1[1] = select_sprite(sprites->_sheet, 480, 685, (585 - 350), (755 - 580)); // v1
+    sprites->aliens_t1[0] = select_sprite(sprites->_sheet, 146, 225, (171 - 146), (242 - 225)); // v1
+    sprites->aliens_t1[1] = select_sprite(sprites->_sheet, 180, 225, (205 - 180), (242 - 225)); // v2
 
-    sprites->aliens_t2[0] = select_sprite(sprites->_sheet, 380, 580, (475 - 380), (650 - 580)); // v2
-    sprites->aliens_t2[1] = select_sprite(sprites->_sheet, 385, 580, (580 - 385), (650 - 580)); // v2
+    sprites->aliens_t2[0] = select_sprite(sprites->_sheet, 73, 225, (97 - 72), (242 - 225));    // v1
+    sprites->aliens_t2[1] = select_sprite(sprites->_sheet, 106, 225, (130 - 105), (242 - 225)); // v2
 
-    sprites->aliens_t3[0] = select_sprite(sprites->_sheet, 395, 475, (547 - 395), (545 - 475)); // v3
-    sprites->aliens_t3[1] = select_sprite(sprites->_sheet, 495, 475, (565 - 495), (540 - 475)); // v3
+    sprites->aliens_t3[0] = select_sprite(sprites->_sheet, 35, 225, (60 - 35), (242 - 225)); // v3
+    sprites->aliens_t3[1] = select_sprite(sprites->_sheet, 6, 225, (27 - 2), (242 - 225));   // v3
 }
 
 // Seleciona a parte da imagem a ser cortada
@@ -43,6 +41,3 @@ void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
         al_draw_bitmap(live, pos_x, pos_y, 0);
     }
 }
-
-
-

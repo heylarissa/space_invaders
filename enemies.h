@@ -12,15 +12,15 @@
 #include "enemies.h"
 #include "shots.h"
 
-#define ENEMY_SPACING 70
+#define ENEMY_SPACING 30
 #define NUM_ENEMIES_LINES 5
 #define ENEMIES_PER_LINE 11
 #define ENEMY_DESLOC (TOTAL_WIDTH / 4)
 
 #define SIZE_ENEMY 50
-#define ENEMY_STATE_ONE 1
-#define ENEMY_STATE_TWO 2
-#define DEAD_ENEMY 0
+#define ENEMY_STATE_ONE 0
+#define ENEMY_STATE_TWO 1
+#define DEAD_ENEMY (-1)
 
 
 typedef struct enemy // apenas 2 inimigos podem atirar

@@ -20,8 +20,8 @@ mais próximos à nave.
 acertado por um projétil da nave.
 
 #### Nave
-- A nave pode se mover a direita e à esquerda, até as bordas do mapa
-- A nave pode atirar caso não exista um projétil seu na coluna
+- A nave pode se mover a direita e à esquerda, até as bordas do mapa - OK
+- A nave pode atirar caso não exista um projétil seu na coluna - OK
 - O projétil da nave causa um de dano em obstáculos
 - A nave inicia com três vidas, sendo que uma vida é removida cada vez que a mesma é acertada; e uma vida adicionada a cada fim de rodada (ao máximo de cinco vidas).
 
@@ -48,10 +48,10 @@ acertado por um projétil da nave.
 
 #### Entidades e Animações
 - Você deve utilizar uma imagem específica para...
-    - Nave;
-    - Inimigo fraco (duas imagens alternantes);
-    - Inimigo intermediário (duas imagens alternantes);
-    - Inimigo forte (duas imagens alternantes)
+    - Nave; - OK
+    - Inimigo fraco (duas imagens alternantes); - OK
+    - Inimigo intermediário (duas imagens alternantes); - OK
+    - Inimigo forte (duas imagens alternantes) - OK
 - Cada tipo de inimigo deve ter um projétil diferente
 - Deve existir uma animação de explosão do inimigo e da nave, quando estes forem derrotados.
 

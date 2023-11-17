@@ -4,6 +4,9 @@
 #include "player.h"
 #include "enemies.h"
 #include "shots.h"
+#include "utils.h"
+
+#define ENEMY_SPEED 10
 
 void create_enemy(ENEMY *enemies, ENEMY *new)
 {
@@ -64,9 +67,7 @@ ENEMY *init_enemies()
 
             // Adiciona o novo inimigo à lista
             if (enemies == NULL)
-            {
                 enemies = new_enemy;
-            }
             else
             {
                 new_enemy->next = enemies;
@@ -76,7 +77,7 @@ ENEMY *init_enemies()
             prev = new_enemy;
         }
         prev = NULL;
-        height = height + ENEMY_SPACING;
+        height = height + ENEMY_SPACING + 20;
     }
     return enemies;
 }
@@ -92,23 +93,24 @@ void draw_enemies(ENEMY *enemies, SPRITES *sprites)
             if (aux->type == 1)
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    al_draw_bitmap(sprites->aliens_t1[0], aux->x, aux->y, 0);
+                    scale_image(sprites->aliens_t1[0], aux->x, aux->y, 2);
                 else if (aux->state == ENEMY_STATE_TWO)
-                    al_draw_bitmap(sprites->aliens_t1[1], aux->x, aux->y, 0);
+                    scale_image(sprites->aliens_t1[1], aux->x, aux->y, 2);
             }
             else if (aux->type == 2)
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    al_draw_bitmap(sprites->aliens_t2[0], aux->x, aux->y, 0);
+                    scale_image(sprites->aliens_t2[0], aux->x, aux->y, 2);
+
                 else if (aux->state == ENEMY_STATE_TWO)
-                    al_draw_bitmap(sprites->aliens_t2[1], aux->x, aux->y, 0);
+                    scale_image(sprites->aliens_t2[1], aux->x, aux->y, 2);
             }
             else
             {
                 if (aux->state == ENEMY_STATE_ONE)
-                    al_draw_bitmap(sprites->aliens_t3[0], aux->x, aux->y, 0);
+                    scale_image(sprites->aliens_t3[0], aux->x, aux->y, 2);
                 else if (aux->state == ENEMY_STATE_TWO)
-                    al_draw_bitmap(sprites->aliens_t3[1], aux->x, aux->y, 0);
+                    scale_image(sprites->aliens_t3[1], aux->x, aux->y, 2);
             }
         }
 
@@ -129,11 +131,11 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
 {
     if (spaceship->direction == RIGHT)
     {
-        spaceship->x += 15;
+        spaceship->x += 30;
     }
     else
     {
-        spaceship->x -= 15;
+        spaceship->x -= 30;
     }
 
     if ((spaceship->x == TOTAL_WIDTH - spaceship->size) || (spaceship->x == 0))
@@ -141,18 +143,27 @@ void update_enemies(ENEMY *enemies, ENEMY *spaceship)
         spaceship->direction = !spaceship->direction;
     }
 
-    if (enemies->direction == LEFT)
-    {
-        enemies->x += 10;
-    }
-    else
-    {
-        enemies->x -= 10;
-    }
+    ENEMY *aux;
+    aux = enemies;
 
-    if ((enemies->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN) || (enemies->x == MARGIN))
+    while (aux != NULL)
     {
-        enemies->y += SIZE_PLAYER / 2;
-        enemies->direction = !enemies->direction; // inverte a direção
+        aux->state = !aux->state;
+        if (aux->direction == LEFT)
+        {
+            aux->x += ENEMY_SPEED;
+        }
+        else
+        {
+            aux->x -= 10;
+        }
+
+        if ((aux->x == TOTAL_WIDTH - SIZE_PLAYER - MARGIN) || (aux->x == MARGIN))
+        {
+            aux->y += SIZE_PLAYER / 2;
+            aux->direction = !aux->direction; // inverte a direção
+        }
+
+        aux = aux->next;
     }
 }

@@ -26,7 +26,6 @@ void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
     draw_player_shots(player.shots, font);
 }
 
-
 int main()
 {
     // TODO: Refatorar toda a inicialização do allegro para uma única struct
@@ -72,7 +71,11 @@ int main()
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
+    ALLEGRO_TIMER *enemies_timer = al_create_timer(1.0 / 20.0);                // Timer para os inimigos (20 frames por segundo)
+    al_register_event_source(queue, al_get_timer_event_source(enemies_timer)); // Registra o timer dos inimigos na fila de eventos
+    int frame_count = 0;
 
+    al_start_timer(enemies_timer);
     al_start_timer(timer);
 
     while (1)
@@ -91,23 +94,33 @@ int main()
             }
             else
             {
-                /* enemy logic */
-                // update_enemies(enemies, spaceship);
+                if (event.timer.source == timer)
+                {
+                    frame_count++;
 
-                /* player logic */
-                update_player_shots(&player);
+                    /* player logic */
+                    update_player_shots(&player);
 
-                if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
-                {
-                    player.x -= SIZE_PLAYER / 2;
+                    if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
+                    {
+                        player.x -= SIZE_PLAYER / 2;
+                    }
+                    else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
+                    {
+                        player.x += SIZE_PLAYER / 2;
+                    }
+                    else if (key[ALLEGRO_KEY_SPACE])
+                    {
+                        create_player_shot(&player);
+                    }
                 }
-                else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
+                else if (event.timer.source == enemies_timer)
                 {
-                    player.x += SIZE_PLAYER / 2;
-                }
-                else if (key[ALLEGRO_KEY_SPACE])
-                {
-                    create_player_shot(&player);
+                    /* enemy logic */
+                    if (frame_count % 5 == 0) // Ajuste o valor (10) para o atraso desejado
+                    {
+                        update_enemies(enemies, spaceship);
+                    }
                 }
             }
 
@@ -146,8 +159,8 @@ int main()
             else
             {
                 // desenha tela
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %f", player.x); // score do player
-                draw_lives(player.lives, sprites->player, font);           // vidas do player
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score); // score do player
+                draw_lives(player.lives, sprites->player, font);               // vidas do player
 
                 // desenha inimigos
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
