@@ -36,7 +36,7 @@ void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
             enemies[i][j].type = type;
             enemies[i][j].state = ENEMY_STATE_ONE; // define a imagem a exibir do inimigo
 
-            if (((i == 0) && (j == 0)) | (j==0))
+            if (((i == 0) && (j == 0)) | (j == 0))
                 enemies[i][j].x = 0;
             else
                 enemies[i][j].x = enemies[i][j - 1].x + SIZE_ENEMY + ENEMY_SPACING;
@@ -127,28 +127,38 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
 
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
-    int change_direction = FALSE;
+    /* Muda a linha dos inimigos quando necessário */
 
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            /* Muda a linha dos inimigos quando necessário */
-            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x <= 0))
-                change_direction = TRUE;
+            enemies[i][j].state = !enemies[i][j].state;
 
-            if (change_direction)
+            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x < 0)) // encosta na borda
             {
-                enemies[i][j].direction = !enemies[i][j].direction; // inverte direção
-                enemies[i][j].state = !enemies[i][j].state;
+                for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+                {
+                    for (int j = 0; j < ENEMIES_PER_LINE; j++)
+                    {
+                        enemies[i][j].y += ENEMY_SPEED / 6;
+                        enemies[i][j].direction = !enemies[i][j].direction; // inverte a direção
+                    }
+                }
             }
-            else /* Move inimigos */
-            {
-                if (enemies[i][j].direction == LEFT)
-                    enemies[i][j].x += ENEMY_SPEED;
-                else
-                    enemies[i][j].x -= ENEMY_SPEED;
-            }
+        }
+    }
+
+    /* Movimenta inimigos */
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+
+            if (enemies[i][j].direction == LEFT)
+                enemies[i][j].x += ENEMY_SPEED;
+            else
+                enemies[i][j].x -= ENEMY_SPEED;
         }
     }
 }
