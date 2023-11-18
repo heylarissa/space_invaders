@@ -86,15 +86,13 @@ int main()
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
-    ALLEGRO_TIMER *enemies_timer = al_create_timer(1.0 / 20.0);
-    al_register_event_source(queue, al_get_timer_event_source(enemies_timer));
     int frame_count = 0;
 
-    al_start_timer(enemies_timer);
     al_start_timer(timer);
     int currentRound = 1;
-    bool colidiu = FALSE;
-    while (1)
+    bool gameover = FALSE;
+
+    while (!done)
     {
         al_wait_for_event(queue, &event);
 
@@ -110,6 +108,10 @@ int main()
             {
                 frame_count++;
 
+                if (player.lives == 0)
+                {
+                    gameover = TRUE;
+                }
                 /* player logic */
                 update_player_shots(&player, enemies);
 
@@ -167,12 +169,13 @@ int main()
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
                 al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
             }
+            else if (gameover)
+            {
+                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+                al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
+            }
             else
             {
-                if (colidiu)
-                {
-                    al_draw_textf(font, WHITE, 0, 0, 0, "COLIDIU");
-                }
 
                 // desenha tela
                 al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);   // score do player
