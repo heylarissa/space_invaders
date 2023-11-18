@@ -7,25 +7,19 @@
 #include <allegro5/allegro_image.h>
 #include <time.h>
 
+#include "shots.h"
 #include "display.h"
 #include "game.h"
 #include "player.h"
 #include "enemies.h"
-#include "shots.h"
 
-void init_game(PLAYER *player, ENEMY **enemies, ENEMY *spaceship, SPRITES *sprites)
+void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites)
 {
     srand((unsigned int)time(NULL));
     init_sprites(sprites);
     init_player(player, sprites);
     init_spaceship(spaceship, sprites);
-    *enemies = init_enemies(sprites);
-}
-
-void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
-{
-    al_draw_bitmap(sprites->player, player.x, player.y, 0);
-    draw_player_shots(player.shots);
+    init_enemies(sprites, enemies);
 }
 
 int main()
@@ -34,7 +28,7 @@ int main()
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
-    ALLEGRO_TIMER *timer = al_create_timer(1.0 / 30.0);
+    ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
     must_init(timer, "timer");
 
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
@@ -67,9 +61,9 @@ int main()
     SPRITES *sprites = (SPRITES *)malloc(sizeof(SPRITES));
     PLAYER player;
     ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
-    ENEMY *enemies = NULL;
+    ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE];
 
-    init_game(&player, &enemies, spaceship, sprites);
+    init_game(&player, enemies, spaceship, sprites);
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -97,32 +91,23 @@ int main()
             else
             {
                 frame_count++;
-                update_enemies_shots(enemies);
 
                 /* player logic */
-                update_player_shots(&player);
+                update_player_shots(&player, enemies);
 
-                if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
-                {
-                    player.x -= SIZE_PLAYER / 2;
-                }
-                else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
-                {
-                    player.x += SIZE_PLAYER / 2;
-                }
-                else if (key[ALLEGRO_KEY_SPACE])
-                {
-                    create_player_shot(&player);
-                }
                 /* enemy logic */
-
                 if (frame_count % 30 == 0)
-                {
                     update_enemies(enemies, spaceship);
+                else if (frame_count % 5 == 0)
+                    update_enemies_shots(enemies);
 
-                    if (enemies->y >= TOTAL_HEIGHT)
-                        done = TRUE; // se chegar na borda inferior
-                }
+                /* interação com teclado */
+                if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
+                    player.x -= SIZE_PLAYER / 2;
+                else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
+                    player.x += SIZE_PLAYER / 2;
+                else if (key[ALLEGRO_KEY_SPACE])
+                    create_player_shot(&player);
             }
 
             for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
@@ -192,19 +177,10 @@ int main()
     al_destroy_bitmap(sprites->_sheet);
     al_destroy_bitmap(sprites->spaceinvaderslogo);
     al_destroy_bitmap(sprites->spaceship);
+    // TODO: Liberar todos os sprites
 
     free(sprites);
     free(spaceship);
-
-    ENEMY *aux;
-    aux = enemies;
-
-    while (aux != NULL)
-    {
-        free(aux->shots);
-        aux = aux->next;
-    }
-    free(enemies);
 
     al_destroy_font(font);
     al_destroy_display(disp);
