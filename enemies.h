@@ -23,25 +23,28 @@
 #define DEAD_ENEMY (-1)
 
 
+enum ENEMY_TYPE {
+    weak = 1,
+    intermed = 2,
+    strong = 3
+};
+
 typedef struct enemy // apenas 2 inimigos podem atirar
 {
     float x, y;
     int width, height; // tamanho da imagem
     int type;    // existem 3 tipos de inimigos + spaceship - define qual sprite será exibida
-    int alive;   // vivo? o espaço deve permanecer, porém o inimigo não é exibido
     SHOT *shots;   // tiro do inimigo - um por vez
     int direction; // direita / esquerda
-    int line; // número da linha
     int state; // vivo img 1, vivo img 2 e quando morre.
-    struct enemy *next;
 } ENEMY;
 
-ENEMY *init_enemies();
+void init_enemies(SPRITES *sprites, ENEMY enemies[][ENEMIES_PER_LINE]);
 void init_spaceship(ENEMY *spaceship, SPRITES *sprites);
-void update_enemies(ENEMY *enemies, ENEMY *spaceship);
-void draw_enemies(ENEMY *enemies, SPRITES *sprites);
+void update_enemies(ENEMY enemies[][ENEMIES_PER_LINE], ENEMY *spaceship);
+void draw_enemies(ENEMY enemies[][ENEMIES_PER_LINE], SPRITES *sprites);
 int get_enemy_type(int line);
-void move_enemies(ENEMY *enemies);
+void move_enemies(ENEMY enemies[][ENEMIES_PER_LINE]);
 void move_red_spaceship(ENEMY *spaceship);
 void update_enemies_shots(ENEMY *enemies);
 

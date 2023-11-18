@@ -13,13 +13,13 @@
 #include "enemies.h"
 #include "shots.h"
 
-void init_game(PLAYER *player, ENEMY **enemies, ENEMY *spaceship, SPRITES *sprites)
+void init_game(PLAYER *player, ENEMY enemies[][ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites)
 {
     srand((unsigned int)time(NULL));
     init_sprites(sprites);
     init_player(player, sprites);
     init_spaceship(spaceship, sprites);
-    *enemies = init_enemies(sprites);
+    init_enemies(sprites, enemies);
 }
 
 void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
@@ -67,9 +67,9 @@ int main()
     SPRITES *sprites = (SPRITES *)malloc(sizeof(SPRITES));
     PLAYER player;
     ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
-    ENEMY *enemies = NULL;
+    ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE];
 
-    init_game(&player, &enemies, spaceship, sprites);
+    init_game(&player, enemies, spaceship, sprites);
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -97,7 +97,7 @@ int main()
             else
             {
                 frame_count++;
-                update_enemies_shots(enemies);
+                // update_enemies_shots(enemies);
 
                 /* player logic */
                 update_player_shots(&player);
@@ -119,9 +119,6 @@ int main()
                 if (frame_count % 30 == 0)
                 {
                     update_enemies(enemies, spaceship);
-
-                    if (enemies->y >= TOTAL_HEIGHT)
-                        done = TRUE; // se chegar na borda inferior
                 }
             }
 
@@ -195,16 +192,6 @@ int main()
 
     free(sprites);
     free(spaceship);
-
-    ENEMY *aux;
-    aux = enemies;
-
-    while (aux != NULL)
-    {
-        free(aux->shots);
-        aux = aux->next;
-    }
-    free(enemies);
 
     al_destroy_font(font);
     al_destroy_display(disp);
