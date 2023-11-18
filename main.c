@@ -5,6 +5,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
+#include <time.h>
 
 #include "display.h"
 #include "game.h"
@@ -14,6 +15,7 @@
 
 void init_game(PLAYER *player, ENEMY **enemies, ENEMY *spaceship, SPRITES *sprites)
 {
+    srand((unsigned int)time(NULL));
     init_sprites(sprites);
     init_player(player, sprites);
     init_spaceship(spaceship, sprites);

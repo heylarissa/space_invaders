@@ -8,12 +8,12 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace
 
 #### Inimigos
 Devem existir três tipos de inimigos:
-- Fracos, não atiram caso exista uma entidade à sua frente ou se já existir um
-projétil na coluna, causam um (1) de dano em obstáculos;
-- Intermediários, não atiram caso exista um projétil na coluna, causam dois (2)
-de dano em obstáculos;
-- Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois
-(2) de dano em obstáculos.
+    - Fracos, não atiram caso exista uma entidade à sua frente ou se já existir um
+    projétil na coluna, causam um (1) de dano em obstáculos;
+    - Intermediários, não atiram caso exista um projétil na coluna, causam dois (2)
+    de dano em obstáculos;
+    - Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois
+    (2) de dano em obstáculos.
 - A cada “rodada” apenas dois (2) inimigos podem atirar, dando preferência àqueles
 mais próximos à nave.
 - Os inimigos têm apenas uma vida, sendo esta removida uma vez que o mesmo é
@@ -39,7 +39,6 @@ acertado por um projétil da nave.
     - Um inimigo fraco morto atribui dez (10) pontos ao jogador;
     - Um inimigo intermediário morto garante vinte (20) pontos ao jogador;
     - Um inimigo forte morto garante quarenta (40) pontos ao jogador;
-    
 
 ## Requisitos relacionados à interface que devem ser implementados
 
