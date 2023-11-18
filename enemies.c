@@ -25,7 +25,6 @@ int get_enemy_type(int line)
 /* Inicializa os inimigos para início do jogo */
 void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
-
     float height = 2 * MARGIN - SIZE_ENEMY + 20;
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
@@ -74,19 +73,17 @@ void draw_enemies_shots(SHOT *shot)
 
 void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *sprites)
 {
-
     ALLEGRO_FONT *font = al_load_font("./assets/VT323-Regular.ttf", 48, 0);
     must_init(font, "font");
-
-    scale_image(sprites->aliens_t1[0], enemies[0][1].x, enemies[0][1].y, 2);
 
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            draw_enemies_shots(enemies[i][j].shots);
             if (enemies[i][j].state != DEAD_ENEMY)
             {
+                draw_enemies_shots(enemies[i][j].shots);
+
                 if (enemies[i][j].type == weak)
                 {
                     if (enemies[i][j].state == ENEMY_STATE_ONE)
@@ -128,34 +125,43 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
 /* Movimenta inimigos */
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
-    /* Muda a linha dos inimigos quando necessário */
+    // Variável para verificar se a direção e a posição vertical foram alteradas
+    int directionChanged = 0;
 
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            enemies[i][j].state = !enemies[i][j].state;
-
-            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x < 0)) // encosta na borda
+            // Verifica se a posição horizontal atingiu as bordas
+            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x < 0))
             {
-                for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+                // Verifica se a direção e a posição vertical já foram alteradas
+                if (!directionChanged)
                 {
-                    for (int j = 0; j < ENEMIES_PER_LINE; j++)
+                    // Altera a direção e a posição vertical
+                    for (int k = 0; k < NUM_ENEMIES_LINES; k++)
                     {
-                        enemies[i][j].y += ENEMY_SPEED / 6;
-                        enemies[i][j].direction = !enemies[i][j].direction; // inverte a direção
+                        for (int l = 0; l < ENEMIES_PER_LINE; l++)
+                        {
+                            enemies[k][l].y += ENEMY_SPEED / 6;
+                            enemies[k][l].direction = !enemies[k][l].direction; // inverte a direção
+                        }
                     }
+                    directionChanged = 1; // Marca como alterado para evitar repetições
                 }
+            }
+            else
+            {
+                directionChanged = 0; // Reinicia a marcação quando não está nas bordas
             }
         }
     }
 
-    /* Movimenta inimigos */
+    // Movimenta os inimigos
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-
             if (enemies[i][j].direction == LEFT)
                 enemies[i][j].x += ENEMY_SPEED;
             else
@@ -188,71 +194,6 @@ int valid_shots(ENEMY *chosen[])
         return TRUE;
 
     return FALSE;
-}
-
-/* Retorna TRUE se houver 2 tiros ativos*/
-int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
-{
-    int shots = 0;
-    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
-    {
-        for (int j = 0; j < ENEMIES_PER_LINE; j++)
-        {
-            if (enemies[i][j].shots != NULL)
-            {
-                shots++;
-            }
-        }
-    }
-
-    *active_shots = shots;
-
-    if (shots >= 2)
-    {
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-/* Atualiza posição dos tiros inimigos */
-void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE])
-{
-
-    int shooting_count = 0;
-
-    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
-    {
-        for (int j = 0; j < ENEMIES_PER_LINE; j++)
-        {
-            if (enemies[i][j].shots != NULL)
-            {
-                enemies[i][j].shots->y += enemies[i][j].height;
-
-                // TODO: verificar colisão aqui
-
-                if (enemies[i][j].shots->y >= TOTAL_HEIGHT) // exclui o tiro
-                {
-                    enemies[i][j].shots = NULL;
-                }
-            }
-        }
-    }
-
-    while (!enemy_active_shots(enemies, &shooting_count)) // Enquanto não tem 2 tiros acontecendo
-    {
-        int random_line = rand() % NUM_ENEMIES_LINES;
-        int random_column = rand() % ENEMIES_PER_LINE;
-
-        if (enemies[random_line][random_column].shots == NULL) // sem tiros ativos
-        {
-            enemies[random_line][random_column].shots = malloc(sizeof(SHOT));
-            enemies[random_line][random_column].shots->x = enemies[random_line][random_column].x;
-            enemies[random_line][random_column].shots->y = enemies[random_line][random_column].y;
-            enemies[random_line][random_column].shots->direction = DOWN;
-            shooting_count++;
-        }
-    }
 }
 
 /* Atualiza posição de inimigos e seus tiros */
