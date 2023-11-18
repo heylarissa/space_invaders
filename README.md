@@ -57,3 +57,15 @@ acertado por um projétil da nave.
 #### Tela
 - O placar e a quantidade de vidas do jogador devem estar explícitos na tela
 - Todas as funcionalidades descritas devem estar acessíveis e/ou visualizáveis através da interface gráfica
+
+
+## Lista de funcionalidades adicionais e opcionais
+
+- Inimigos se movem em bloco, para a direita e esquerda (15 pts)
+- Projéteis da nave podem se chocar com os dois inimigos e se anularem (10 pts)
+- Inserção de colunas vazias entre os inimigos (5 pts)
+- Progressão de dificuldade a cada nível (pelo menos 4 progressões) (10 pts)
+- Implementação de poderes bônus (dois tiros ou escudo) temporários para a nave (15 pts)
+- Implementação de novos tipos de inimigos, incluindo novo modelo de ataque e nova imagem (5 pts cada, no máximo 2 novos)
+- Implementação de um inimigo que atira projéteis em diagonal e que ricocheteiam na borda do mapa (15 pts)
+- Salvar e carregar jogo salvo (10 pts)
