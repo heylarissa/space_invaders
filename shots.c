@@ -97,7 +97,6 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
 
                 if (player_colision(*player, enemies))
                 {
-                    // tirar vida do player
                     player->lives--;
                 }
 
@@ -146,6 +145,7 @@ int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot)
 
     return FALSE;
 }
+
 /* Retorna TRUE se houver 2 tiros ativos*/
 int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
 {

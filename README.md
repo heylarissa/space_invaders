@@ -38,7 +38,7 @@ Devem existir três tipos de inimigos: - OK
 ## Requisitos relacionados à interface que devem ser implementados
 
 #### Menu
-- Deve existir um menu principal com a funcionalidade de iniciar o jogo
+- Deve existir um menu principal com a funcionalidade de iniciar o jogo - OK
 
 #### Entidades e Animações
 - Você deve utilizar uma imagem específica para...
