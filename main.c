@@ -13,7 +13,7 @@
 #include "enemies.h"
 #include "shots.h"
 
-void init_game(PLAYER *player, ENEMY enemies[][ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites)
+void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites)
 {
     srand((unsigned int)time(NULL));
     init_sprites(sprites);
@@ -22,11 +22,6 @@ void init_game(PLAYER *player, ENEMY enemies[][ENEMIES_PER_LINE], ENEMY *spacesh
     init_enemies(sprites, enemies);
 }
 
-void draw_player(PLAYER player, ALLEGRO_FONT *font, SPRITES *sprites)
-{
-    al_draw_bitmap(sprites->player, player.x, player.y, 0);
-    draw_player_shots(player.shots);
-}
 
 int main()
 {
@@ -34,7 +29,7 @@ int main()
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
-    ALLEGRO_TIMER *timer = al_create_timer(1.0 / 30.0);
+    ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
     must_init(timer, "timer");
 
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();

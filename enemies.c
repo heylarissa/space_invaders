@@ -13,56 +13,54 @@ int get_enemy_type(int line)
     int type;
 
     if (line == 0)
-        type = 3; // strong
+        type = strong;
     else if (line == 1 || line == 2)
-        type = 2; // intermediate
+        type = intermed;
     else
-        type = 1; // weak
+        type = weak;
 
     return type;
 }
 
-void init_enemies(SPRITES *sprites, ENEMY enemies[][ENEMIES_PER_LINE])
+/* Inicializa os inimigos para início do jogo */
+void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
 
     float height = 2 * MARGIN - SIZE_ENEMY + 20;
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         int type = get_enemy_type(i);
-
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            ENEMY *new_enemy = &enemies[i][j];
+            enemies[i][j].direction = LEFT;
+            enemies[i][j].type = type;
+            enemies[i][j].state = ENEMY_STATE_ONE; // define a imagem a exibir do inimigo
 
-            new_enemy->direction = LEFT;
-            new_enemy->type = type;
-            new_enemy->state = ENEMY_STATE_ONE; // define a imagem a exibir do inimigo
-
-            if (i != 0 || j != 0)
-                new_enemy->x = enemies[i][j - 1].x + SIZE_ENEMY + ENEMY_SPACING;
+            if (((i == 0) && (j == 0)) | (j==0))
+                enemies[i][j].x = 0;
             else
-                new_enemy->x = 0;
+                enemies[i][j].x = enemies[i][j - 1].x + SIZE_ENEMY + ENEMY_SPACING;
 
-            new_enemy->shots = NULL;
+            enemies[i][j].shots = NULL;
 
             // define o tamanho do bloco do inimigo
-            if (new_enemy->type == weak)
+            if (enemies[i][j].type == weak)
             {
-                new_enemy->width = al_get_bitmap_width(sprites->aliens_t1[0]);
-                new_enemy->height = al_get_bitmap_height(sprites->aliens_t1[0]);
+                enemies[i][j].width = al_get_bitmap_width(sprites->aliens_t1[0]);
+                enemies[i][j].height = al_get_bitmap_height(sprites->aliens_t1[0]);
             }
 
-            else if (new_enemy->type == intermed)
+            else if (enemies[i][j].type == intermed)
             {
-                new_enemy->width = al_get_bitmap_width(sprites->aliens_t2[0]);
-                new_enemy->height = al_get_bitmap_height(sprites->aliens_t2[0]);
+                enemies[i][j].width = al_get_bitmap_width(sprites->aliens_t2[0]);
+                enemies[i][j].height = al_get_bitmap_height(sprites->aliens_t2[0]);
             }
-            else if (new_enemy->type == strong)
+            else if (enemies[i][j].type == strong)
             {
-                new_enemy->width = al_get_bitmap_width(sprites->aliens_t3[0]);
-                new_enemy->height = al_get_bitmap_height(sprites->aliens_t2[0]);
+                enemies[i][j].width = al_get_bitmap_width(sprites->aliens_t3[0]);
+                enemies[i][j].height = al_get_bitmap_height(sprites->aliens_t2[0]);
             }
-            new_enemy->y = height;
+            enemies[i][j].y = height;
         }
         height = height + ENEMY_SPACING;
     }
@@ -74,8 +72,14 @@ void draw_enemies_shots(SHOT *shot_aux)
         al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x - 5, shot_aux->y - 20, WHITE);
 }
 
-void draw_enemies(ENEMY enemies[][ENEMIES_PER_LINE], SPRITES *sprites)
+void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *sprites)
 {
+
+    ALLEGRO_FONT *font = al_load_font("./assets/VT323-Regular.ttf", 48, 0);
+    must_init(font, "font");
+
+    scale_image(sprites->aliens_t1[0], enemies[0][1].x, enemies[0][1].y, 2);
+
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
@@ -90,22 +94,23 @@ void draw_enemies(ENEMY enemies[][ENEMIES_PER_LINE], SPRITES *sprites)
                     else if (enemies[i][j].state == ENEMY_STATE_TWO)
                         scale_image(sprites->aliens_t1[1], enemies[i][j].x, enemies[i][j].y, 2);
                 }
-            }
-            else if (enemies[i][j].type == intermed)
-            {
-                if (enemies[i][j].state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t2[0], enemies[i][j].x, enemies[i][j].y, 2);
 
-                else if (enemies[i][j].state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t2[1], enemies[i][j].x, enemies[i][j].y, 2);
-            }
-            else
-            {
-                if (enemies[i][j].state == ENEMY_STATE_ONE)
-                    scale_image(sprites->aliens_t3[0], enemies[i][j].x, enemies[i][j].y, 2);
+                else if (enemies[i][j].type == intermed)
+                {
+                    if (enemies[i][j].state == ENEMY_STATE_ONE)
+                        scale_image(sprites->aliens_t2[0], enemies[i][j].x, enemies[i][j].y, 2);
 
-                else if (enemies[i][j].state == ENEMY_STATE_TWO)
-                    scale_image(sprites->aliens_t3[1], enemies[i][j].x, enemies[i][j].y, 2);
+                    else if (enemies[i][j].state == ENEMY_STATE_TWO)
+                        scale_image(sprites->aliens_t2[1], enemies[i][j].x, enemies[i][j].y, 2);
+                }
+                else
+                {
+                    if (enemies[i][j].state == ENEMY_STATE_ONE)
+                        scale_image(sprites->aliens_t3[0], enemies[i][j].x, enemies[i][j].y, 2);
+
+                    else if (enemies[i][j].state == ENEMY_STATE_TWO)
+                        scale_image(sprites->aliens_t3[1], enemies[i][j].x, enemies[i][j].y, 2);
+                }
             }
         }
     }
@@ -117,11 +122,10 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
     spaceship->y = MARGIN;
     spaceship->width = al_get_bitmap_width(sprites->spaceship) * 0.5;
     spaceship->height = al_get_bitmap_height(sprites->spaceship) * 0.5;
-
     spaceship->direction = RIGHT;
 }
 
-void move_enemies(ENEMY enemies[][ENEMIES_PER_LINE])
+void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
     int change_direction = FALSE;
 
@@ -129,8 +133,6 @@ void move_enemies(ENEMY enemies[][ENEMIES_PER_LINE])
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            /* Move os inimigos*/
-
             /* Muda a linha dos inimigos quando necessário */
             if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x <= 0))
                 change_direction = TRUE;
@@ -140,7 +142,7 @@ void move_enemies(ENEMY enemies[][ENEMIES_PER_LINE])
                 enemies[i][j].direction = !enemies[i][j].direction; // inverte direção
                 enemies[i][j].state = !enemies[i][j].state;
             }
-            else
+            else /* Move inimigos */
             {
                 if (enemies[i][j].direction == LEFT)
                     enemies[i][j].x += ENEMY_SPEED;
@@ -211,7 +213,7 @@ int no_enemy_active_shot(ENEMY *enemies)
     //     aux = aux->next;
     // }
 
-    // return TRUE;
+    return TRUE;
 }
 
 /* Atualiza posição dos tiros inimigos */
@@ -243,7 +245,7 @@ void update_enemies_shots(ENEMY *enemies)
 }
 
 /* Atualiza posição de inimigos e seus tiros */
-void update_enemies(ENEMY enemies[][ENEMIES_PER_LINE], ENEMY *spaceship)
+void update_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship)
 {
     move_red_spaceship(spaceship);
     move_enemies(enemies);
