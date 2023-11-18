@@ -91,7 +91,6 @@ int main()
             else
             {
                 frame_count++;
-                update_enemies_shots(enemies);
 
                 /* player logic */
                 update_player_shots(&player);
@@ -113,6 +112,10 @@ int main()
                 if (frame_count % 30 == 0)
                 {
                     update_enemies(enemies, spaceship);
+                }
+                else if (frame_count % 5 == 0)
+                {
+                    update_enemies_shots(enemies);
                 }
             }
 
