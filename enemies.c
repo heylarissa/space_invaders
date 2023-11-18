@@ -73,6 +73,7 @@ void draw_enemies_shots(SHOT *shot)
 
 void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *sprites)
 {
+
     ALLEGRO_FONT *font = al_load_font("./assets/VT323-Regular.ttf", 48, 0);
     must_init(font, "font");
 
@@ -125,43 +126,35 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
 /* Movimenta inimigos */
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
-    // Variável para verificar se a direção e a posição vertical foram alteradas
-    int directionChanged = 0;
+    /* Muda a linha dos inimigos quando necessário */
 
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            // Verifica se a posição horizontal atingiu as bordas
-            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x < 0))
+            if (enemies[i][j].state != DEAD_ENEMY)
+                enemies[i][j].state = !enemies[i][j].state;
+
+            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x < 0)) // encosta na borda
             {
-                // Verifica se a direção e a posição vertical já foram alteradas
-                if (!directionChanged)
+                for (int i = 0; i < NUM_ENEMIES_LINES; i++)
                 {
-                    // Altera a direção e a posição vertical
-                    for (int k = 0; k < NUM_ENEMIES_LINES; k++)
+                    for (int j = 0; j < ENEMIES_PER_LINE; j++)
                     {
-                        for (int l = 0; l < ENEMIES_PER_LINE; l++)
-                        {
-                            enemies[k][l].y += ENEMY_SPEED / 6;
-                            enemies[k][l].direction = !enemies[k][l].direction; // inverte a direção
-                        }
+                        enemies[i][j].y += ENEMY_SPEED / 6;
+                        enemies[i][j].direction = !enemies[i][j].direction; // inverte a direção
                     }
-                    directionChanged = 1; // Marca como alterado para evitar repetições
                 }
-            }
-            else
-            {
-                directionChanged = 0; // Reinicia a marcação quando não está nas bordas
             }
         }
     }
 
-    // Movimenta os inimigos
+    /* Movimenta inimigos */
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
+
             if (enemies[i][j].direction == LEFT)
                 enemies[i][j].x += ENEMY_SPEED;
             else
