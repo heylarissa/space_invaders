@@ -18,7 +18,8 @@ Devem existir três tipos de inimigos: - OK
 - A nave pode se mover a direita e à esquerda, até as bordas do mapa - OK
 - A nave pode atirar caso não exista um projétil seu na coluna - OK
 - O projétil da nave causa um de dano em obstáculos
-- A nave inicia com três vidas, sendo que uma vida é removida cada vez que a mesma é acertada; e uma vida adicionada a cada fim de rodada (ao máximo de cinco vidas).
+- A nave inicia com três vidas, sendo que uma vida é removida cada vez que a mesma é acertada; 
+    e uma vida adicionada a cada fim de rodada (ao máximo de cinco vidas). - OK
 
 #### Obstáculos
 - Obstáculos podem ser colocados entre a nave e os inimigos
@@ -55,11 +56,11 @@ Devem existir três tipos de inimigos: - OK
 
 ## Lista de funcionalidades adicionais e opcionais
 - Inimigos se movem em bloco, para a direita e esquerda (15 pts) - OK
-- Projéteis da nave podem se chocar com os dos inimigos e se anularem (10 pts)
+- Projéteis da nave podem se chocar com os dos inimigos e se anularem (10 pts) ***********
 - Inserção de colunas vazias entre os inimigos (5 pts)
-- Progressão de dificuldade a cada nível (pelo menos 4 progressões) (10 pts)
+- Progressão de dificuldade a cada nível (pelo menos 4 progressões) (10 pts) ***********
 - Implementação de poderes bônus (dois tiros ou escudo) temporários para a nave (15 pts)
 - Implementação de novos tipos de inimigos, incluindo novo modelo de ataque e nova imagem (5 pts cada, no máximo 2 novos)
 - Implementação de um inimigo que atira projéteis em diagonal e que ricocheteiam na borda do mapa (15 pts)
-- Salvar e carregar jogo salvo (10 pts)
-- Nave inimiga (vermelha) com pontuação extra atrás de todos os inimigos [10 PONTOS] - OK
+- Salvar e carregar jogo salvo (10 pts) *****************
+- Nave inimiga (vermelha) com pontuação extra atrás de todos os inimigos [10 PONTOS] - meio OK *************

@@ -66,20 +66,42 @@ void delete_shot(int position, SHOT **head)
 }
 
 /* Tiro colidiu com player */
-bool player_colision(PLAYER player, ENEMY (*enemies)[ENEMIES_PER_LINE])
+bool player_collision(PLAYER player, ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
+    ALLEGRO_FONT *font = al_load_font("./assets/VT323-Regular.ttf", 48, 0);
+    must_init(font, "font");
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            if (enemies[i][j].x >= player.x &&
-                enemies[i][j].x >= player.x + player.w &&
-                enemies[i][j].y >= player.y &&
-                enemies[i][j].y <= player.y + player.h)
-                return TRUE;
+            if (enemies[i][j].shots != NULL)
+            {
+                // printf("player: %f %f  %f %f \n", player.x, player.y, player.x + player.w, player.y + player.h);
+
+                // printf("enemy: %f %f", enemies[i][j].shots->x, enemies[i][j].shots->y);
+                if ((enemies[i][j].shots->x <= (player.x + player.w)) &&
+                    (enemies[i][j].shots->x >= player.x) &&
+                    (enemies[i][j].shots->y <= (player.y + player.h)) &&
+                    (enemies[i][j].shots->y >= player.y))
+                {
+                    return TRUE; // colisão detectada
+                }
+            }
         }
     }
-    return FALSE;
+    return FALSE; // sem colisão
+}
+
+void delete_enemy_shot(SHOT *head)
+{
+    SHOT *shot;
+    shot = head;
+    if (head == NULL || shot == NULL)
+        return;
+
+    head = head->next;
+    free(shot);
+    return;
 }
 
 /* Atualiza posição dos tiros inimigos */
@@ -94,12 +116,15 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
             if (enemies[i][j].shots != NULL)
             {
                 enemies[i][j].shots->y += enemies[i][j].height;
+                // Adicione mensagens de depuração aqui
+                // printf("Enemy Shot[%d][%d]: y=%f\n", i, j, enemies[i][j].shots->y);
 
-                if (player_colision(*player, enemies))
+                if (player_collision(*player, enemies))
                 {
                     player->lives--;
+                    delete_enemy_shot(enemies[i][j].shots);
+                    printf("Player Hit! Lives: %d\n", player->lives);
                 }
-
                 if (enemies[i][j].shots->y >= TOTAL_HEIGHT) // exclui o tiro
                 {
                     enemies[i][j].shots = NULL;

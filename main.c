@@ -93,6 +93,7 @@ int main()
     al_start_timer(enemies_timer);
     al_start_timer(timer);
     int currentRound = 1;
+    bool colidiu = FALSE;
     while (1)
     {
         al_wait_for_event(queue, &event);
@@ -128,6 +129,7 @@ int main()
 
                 if (checkAllEnemiesDefeated(enemies))
                 {
+                    player.lives++;
                     startNewRound(enemies, spaceship, sprites, &player);
                     currentRound++;
                 }
@@ -167,8 +169,13 @@ int main()
             }
             else
             {
+                if (colidiu)
+                {
+                    al_draw_textf(font, WHITE, 0, 0, 0, "COLIDIU");
+                }
+
                 // desenha tela
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.w);   // score do player
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);   // score do player
                 draw_lives(player.lives, sprites->player, font);                 // vidas do player
                 al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound); // score do player
 
