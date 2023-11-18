@@ -11,7 +11,6 @@
 #include "player.h"
 #include "enemies.h"
 
-
 #define ENEMY_SPACING 50
 #define NUM_ENEMIES_LINES 5
 #define ENEMIES_PER_LINE 11

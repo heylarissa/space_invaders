@@ -56,9 +56,7 @@ void delete_shot(int position, SHOT **head)
     else
     {
         for (int i = 0; i < position - 1; i++)
-        {
             temp = temp->next;
-        }
 
         SHOT *del = temp->next;
         temp->next = temp->next->next;
@@ -66,8 +64,26 @@ void delete_shot(int position, SHOT **head)
         free(del);
     }
 }
+
+/* Tiro colidiu com player */
+bool player_colision(PLAYER player, ENEMY (*enemies)[ENEMIES_PER_LINE])
+{
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+            if (enemies[i][j].x >= player.x &&
+                enemies[i][j].x >= player.x + player.w &&
+                enemies[i][j].y >= player.y &&
+                enemies[i][j].y <= player.y + player.h)
+                return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 /* Atualiza posição dos tiros inimigos */
-void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE])
+void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
 {
     int shooting_count = 0;
 
@@ -79,7 +95,11 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE])
             {
                 enemies[i][j].shots->y += enemies[i][j].height;
 
-                // TODO: verificar colisão aqui
+                if (player_colision(*player, enemies))
+                {
+                    // tirar vida do player
+                    player->lives--;
+                }
 
                 if (enemies[i][j].shots->y >= TOTAL_HEIGHT) // exclui o tiro
                 {

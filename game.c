@@ -34,7 +34,7 @@ void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
 {
     int pos_x = 500;
     int pos_y = 0;
-    al_draw_text(font, WHITE, 300, 0, 0, "LIVES ");
+    al_draw_text(font, WHITE, 700, 0, 0, "LIVES ");
     for (int i = 0; i < lives; i++)
     {
         pos_x = pos_x + al_get_bitmap_width(live);
