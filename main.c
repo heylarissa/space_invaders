@@ -22,7 +22,6 @@ void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaces
     init_enemies(sprites, enemies);
 }
 
-
 int main()
 {
     // TODO: Refatorar toda a inicialização do allegro para uma única struct
@@ -92,7 +91,7 @@ int main()
             else
             {
                 frame_count++;
-                // update_enemies_shots(enemies);
+                update_enemies_shots(enemies);
 
                 /* player logic */
                 update_player_shots(&player);

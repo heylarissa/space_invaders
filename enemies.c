@@ -66,10 +66,10 @@ void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
     }
 }
 
-void draw_enemies_shots(SHOT *shot_aux)
+void draw_enemies_shots(SHOT *shot)
 {
-    if (shot_aux != NULL)
-        al_draw_filled_rectangle(shot_aux->x, shot_aux->y, shot_aux->x - 5, shot_aux->y - 20, WHITE);
+    if (shot != NULL)
+        al_draw_filled_rectangle(shot->x, shot->y, shot->x - 5, shot->y - 20, WHITE);
 }
 
 void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *sprites)
@@ -84,6 +84,7 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
+            draw_enemies_shots(enemies[i][j].shots);
             if (enemies[i][j].state != DEAD_ENEMY)
             {
                 if (enemies[i][j].type == weak)
@@ -94,7 +95,6 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
                     else if (enemies[i][j].state == ENEMY_STATE_TWO)
                         scale_image(sprites->aliens_t1[1], enemies[i][j].x, enemies[i][j].y, 2);
                 }
-
                 else if (enemies[i][j].type == intermed)
                 {
                     if (enemies[i][j].state == ENEMY_STATE_ONE)
@@ -125,6 +125,7 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
     spaceship->direction = RIGHT;
 }
 
+/* Movimenta inimigos */
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
     /* Muda a linha dos inimigos quando necessário */
@@ -181,77 +182,77 @@ void move_red_spaceship(ENEMY *spaceship)
     }
 }
 
-/* Escolhe quais inimigos irão atirar */
-void choose_shoot_enemies(ENEMY *enemies)
+int valid_shots(ENEMY *chosen[])
 {
-    // int total_enemies = ENEMIES_PER_LINE * NUM_ENEMIES_LINES;
+    if (chosen[0] != chosen[1] && chosen[0] != NULL && chosen[1] != NULL)
+        return TRUE;
 
-    // int chosen[2];
-    // srand((unsigned int)time(NULL));
-
-    // // Escolhe aleatoriamente os índices dos inimigos que atirarão
-    // for (int i = 0; i < 2; i++)
-    // {
-    //     int randomIndex;
-
-    //     // Garante que o índice escolhido seja único
-    //     do
-    //     {
-    //         randomIndex = rand() % total_enemies;
-    //     } while (contains(chosen, randomIndex));
-
-    //     // Adiciona o índice escolhido à lista vinculada
-    //     chosen[i] = randomIndex;
-
-    //     // Define a capacidade de atirar para verdadeiro no inimigo correspondente
-    //     set_shooting_ability(enemies, chosen[i]);
-    // }
+    return FALSE;
 }
 
-/* Retorna se existem tiros ativos na lista de inimigos */
-int no_enemy_active_shot(ENEMY *enemies)
+/* Retorna TRUE se houver 2 tiros ativos*/
+int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
 {
-    // ENEMY *aux;
-    // aux = enemies;
+    int shots = 0;
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+            if (enemies[i][j].shots != NULL)
+            {
+                shots++;
+            }
+        }
+    }
 
-    // while (aux != NULL)
-    // {
-    //     if (aux->shots != NULL)
-    //     {
-    //         return FALSE;
-    //     }
-    //     aux = aux->next;
-    // }
+    *active_shots = shots;
 
-    return TRUE;
+    if (shots >= 2)
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 /* Atualiza posição dos tiros inimigos */
-void update_enemies_shots(ENEMY *enemies)
+void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
-    // ENEMY *aux;
-    // aux = enemies;
 
-    // while (aux != NULL)
-    // {
-    //     if (aux->shots != NULL)
-    //     {
-    //         aux->shots->y += aux->height;
-    //         //           if (check_collision(aux->shots->x, aux->shots->y, ENEMY_SHOT_SIZE, ENEMY_SHOT_SIZE, player->x, player->y, SIZE_PLAYER, SIZE_PLAYER))
-    //         // {
-    //         //     // Trata a colisão com o jogador
-    //         //     // ... (coloque aqui o código para tratar a colisão do tiro inimigo com o jogador)
-    //         // }
+    int shooting_count = 0;
 
-    //         if (aux->shots->y >= TOTAL_HEIGHT)
-    //             aux->shots = NULL;
-    //     }
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+            if (enemies[i][j].shots != NULL)
+            {
+                enemies[i][j].shots->y += enemies[i][j].height;
 
-    //     aux = aux->next;
-    // }
+                // TODO: verificar colisão aqui
 
-    // if (no_enemy_active_shot(enemies))
-    //     choose_shoot_enemies(enemies);
+                if (enemies[i][j].shots->y >= TOTAL_HEIGHT) // exclui o tiro
+                {
+                    enemies[i][j].shots = NULL;
+                }
+            }
+        }
+    }
+
+    while (!enemy_active_shots(enemies, &shooting_count)) // Enquanto não tem 2 tiros acontecendo
+    {
+        int random_line = rand() % NUM_ENEMIES_LINES;
+        int random_column = rand() % ENEMIES_PER_LINE;
+
+        if (enemies[random_line][random_column].shots == NULL) // sem tiros ativos
+        {
+            enemies[random_line][random_column].shots = malloc(sizeof(SHOT));
+            enemies[random_line][random_column].shots->x = enemies[random_line][random_column].x;
+            enemies[random_line][random_column].shots->y = enemies[random_line][random_column].y;
+            enemies[random_line][random_column].shots->direction = DOWN;
+            shooting_count++;
+        }
+    }
 }
 
 /* Atualiza posição de inimigos e seus tiros */

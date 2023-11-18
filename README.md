@@ -8,16 +8,11 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace
 
 #### Inimigos
 Devem existir três tipos de inimigos:
-    - Fracos, não atiram caso exista uma entidade à sua frente ou se já existir um
-    projétil na coluna, causam um (1) de dano em obstáculos;
-    - Intermediários, não atiram caso exista um projétil na coluna, causam dois (2)
-    de dano em obstáculos;
-    - Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois
-    (2) de dano em obstáculos.
-- A cada “rodada” apenas dois (2) inimigos podem atirar, dando preferência àqueles
-mais próximos à nave.
-- Os inimigos têm apenas uma vida, sendo esta removida uma vez que o mesmo é
-acertado por um projétil da nave.
+    - Fracos, não atiram caso exista uma entidade à sua frente ou se já existir um projétil na coluna, causam um (1) de dano em obstáculos;
+    - Intermediários, não atiram caso exista um projétil na coluna, causam dois (2) de dano em obstáculos;
+    - Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois (2) de dano em obstáculos.
+- A cada “rodada” apenas dois (2) inimigos podem atirar, dando preferência àqueles mais próximos à nave.
+- Os inimigos têm apenas uma vida, sendo esta removida uma vez que o mesmo é acertado por um projétil da nave.
 
 #### Nave
 - A nave pode se mover a direita e à esquerda, até as bordas do mapa - OK
@@ -58,14 +53,14 @@ acertado por um projétil da nave.
 - O placar e a quantidade de vidas do jogador devem estar explícitos na tela
 - Todas as funcionalidades descritas devem estar acessíveis e/ou visualizáveis através da interface gráfica
 
-
 ## Lista de funcionalidades adicionais e opcionais
 
-- Inimigos se movem em bloco, para a direita e esquerda (15 pts)
-- Projéteis da nave podem se chocar com os dois inimigos e se anularem (10 pts)
+- Inimigos se movem em bloco, para a direita e esquerda (15 pts) - OK
+- Projéteis da nave podem se chocar com os dos inimigos e se anularem (10 pts)
 - Inserção de colunas vazias entre os inimigos (5 pts)
 - Progressão de dificuldade a cada nível (pelo menos 4 progressões) (10 pts)
 - Implementação de poderes bônus (dois tiros ou escudo) temporários para a nave (15 pts)
 - Implementação de novos tipos de inimigos, incluindo novo modelo de ataque e nova imagem (5 pts cada, no máximo 2 novos)
 - Implementação de um inimigo que atira projéteis em diagonal e que ricocheteiam na borda do mapa (15 pts)
 - Salvar e carregar jogo salvo (10 pts)
+- Nave inimiga (vermelha) com pontuação extra atrás de todos os inimigos [10 PONTOS] - OK

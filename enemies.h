@@ -22,6 +22,8 @@
 #define ENEMY_STATE_TWO 1
 #define DEAD_ENEMY (-1)
 
+#define ENEMY_SHOOTING_LIMIT 2
+
 enum ENEMY_TYPE
 {
     weak = 1,
@@ -46,6 +48,6 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
 int get_enemy_type(int line);
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 void move_red_spaceship(ENEMY *spaceship);
-void update_enemies_shots(ENEMY *enemies);
+void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 
 #endif
