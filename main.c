@@ -68,7 +68,57 @@ void draw_game(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites, ALLEGRO_FONT
     // desenha player
     draw_player(sprites, *player);
 }
+void game_logic(unsigned char key[], PLAYER *player, GameState *gameState, int *frame_count, SPRITES *sprites, ENEMY *spaceship, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES])
+{
+    if (player->lives == 0)
+        *gameState = GAME_OVER;
 
+    if (player->state == explode)
+    {
+        player->state = alive;
+        player->x = 50;
+    }
+
+    /* enemy logic */
+    if (*frame_count % 30 == 0)
+        update_enemies(enemies, spaceship);
+    else if (*frame_count % 5 == 0)
+        update_enemies_shots(enemies, player, obstacles);
+
+    /* player logic */
+
+    update_player_shots(player, enemies, obstacles);
+    move_player(key, player);
+}
+void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, int currentRound, OBSTACLE obstacles[NUM_OBSTACLES], PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY spaceship)
+{
+    switch (*gameState)
+    {
+    case MENU:
+        al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+        al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
+        al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
+        break;
+
+    case GAME_OVER:
+        al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+        al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
+        al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS ESC OR CLOSE THE WINDOW");
+        break;
+
+    case PAUSED:
+        al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+        al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "PAUSED");
+        al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS P TO CONTINUE");
+        al_flip_display();
+        break;
+
+    case GAME:
+
+        draw_game(obstacles, sprites, font, player, currentRound, enemies, spaceship);
+        break;
+    }
+}
 int main()
 {
     // TODO: Refatorar toda a inicialização do allegro para uma única struct
@@ -149,27 +199,7 @@ int main()
                 break;
             case GAME:
                 frame_count++;
-                if (player.lives == 0)
-                    gameState = GAME_OVER;
-
-                if (player.state == explode)
-                {
-                    player.state = alive;
-                    player.x = 50;
-                }
-
-                /* enemy logic */
-                if (frame_count % 30 == 0)
-                    update_enemies(enemies, &spaceship);
-                else if (frame_count % 5 == 0)
-                    update_enemies_shots(enemies, &player, obstacles);
-
-                /* player logic */
-
-                update_player_shots(&player, enemies, obstacles);
-                move_player(key, &player);
-
-
+                game_logic(key, &player, &gameState, &frame_count, sprites, &spaceship, enemies, obstacles);
                 if (checkAllEnemiesDefeated(enemies))
                 {
                     if (player.lives < 5)
@@ -220,32 +250,7 @@ int main()
         if (redraw && al_is_event_queue_empty(queue))
         {
             al_clear_to_color(BLACK);
-            switch (gameState)
-            {
-            case MENU:
-                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
-                al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
-                al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
-                break;
-
-            case GAME_OVER:
-                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
-                al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
-                al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS ESC OR CLOSE THE WINDOW");
-                break;
-
-            case PAUSED:
-                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
-                al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "PAUSED");
-                al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS P TO CONTINUE");
-                al_flip_display();
-                break;
-
-            case GAME:
-
-                draw_game(obstacles, sprites, font, &player, currentRound, enemies, spaceship);
-                break;
-            }
+            redraw_screem(&gameState, sprites, font, currentRound, obstacles, &player, enemies, spaceship);
             al_flip_display();
 
             redraw = false;
