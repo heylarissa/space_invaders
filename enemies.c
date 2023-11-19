@@ -151,6 +151,7 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
     spaceship->width = al_get_bitmap_width(sprites->spaceship) * 0.5;
     spaceship->height = al_get_bitmap_height(sprites->spaceship) * 0.5;
     spaceship->direction = RIGHT;
+    spaceship->shots = NULL;
 }
 
 /* Movimenta inimigos */

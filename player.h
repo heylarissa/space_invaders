@@ -10,6 +10,8 @@
 #include <allegro5/allegro_image.h>
 
 #define PLAYER_SHOT_SPEED 10
+#define PLAYER_SPEED 15
+
 typedef struct player
 {
     float x, y;
