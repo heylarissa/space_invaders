@@ -3,9 +3,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <allegro5/allegro.h>
+#include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_image.h>
 
 #define GREEN al_map_rgb(52, 255, 0)
 #define WHITE al_map_rgb(255, 255, 255)

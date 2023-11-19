@@ -42,12 +42,7 @@ void draw_game(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites, ALLEGRO_FONT
     al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
 
     // desenha inimigos
-    al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
-                          al_get_bitmap_width(sprites->spaceship),
-                          al_get_bitmap_height(sprites->spaceship),
-                          spaceship.x, spaceship.y,
-                          al_get_bitmap_width(sprites->spaceship) * 0.5,
-                          al_get_bitmap_height(sprites->spaceship) * 0.5, 0); // desenha nave vermelha
+    draw_red_spaceship(sprites, spaceship);
 
     draw_enemies(enemies, sprites);
 
@@ -72,8 +67,7 @@ void game_logic(unsigned char key[], PLAYER *player, GameState *gameState, int *
         update_enemies_shots(enemies, player, obstacles);
 
     /* player logic */
-
-    update_player_shots(player, enemies, obstacles);
+    update_player_shots(player, enemies, obstacles, spaceship);
     move_player(key, player);
 }
 void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, int currentRound, OBSTACLE obstacles[NUM_OBSTACLES], PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY spaceship)

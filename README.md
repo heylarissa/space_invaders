@@ -51,7 +51,7 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace
     - Inimigo intermediário (duas imagens alternantes); - OK  
     - Inimigo forte (duas imagens alternantes) - OK  
 - [x] Cada tipo de inimigo deve ter um projétil diferente  
-- [ ] Deve existir uma animação de explosão do inimigo e da nave, quando estes forem derrotados.  
+- [x] Deve existir uma animação de explosão do inimigo e da nave, quando estes forem derrotados.  
 
 #### Tela
 - [x] O placar e a quantidade de vidas do jogador devem estar explícitos na tela - OK  
@@ -65,5 +65,5 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace
 - [ ] Implementação de poderes bônus (dois tiros ou escudo) temporários para a nave (15 pts)  
 - [ ] Implementação de novos tipos de inimigos, incluindo novo modelo de ataque e nova imagem (5 pts cada, no máximo 2 novos)  
 - [ ] Implementação de um inimigo que atira projéteis em diagonal e que ricocheteiam na borda do mapa (15 pts)  
-- [ ] Salvar e carregar jogo salvo (10 pts) *****************  
+- [ ] Salvar e carregar jogo salvo (10 pts)  
 - [ ] Nave inimiga (vermelha) com pontuação extra atrás de todos os inimigos [10 PONTOS] - meio OK *************  

@@ -236,8 +236,32 @@ int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
 
     return FALSE;
 }
+bool red_spaceship_collision(ENEMY *spaceship, SHOT aux, PLAYER *player)
+{
 
-void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES])
+    if ((spaceship->state != DEAD_ENEMY) &&
+        (aux.x >= spaceship->x) &&
+        (aux.x <= (spaceship->x + spaceship->width)) &&
+        (aux.y >= spaceship->y) &&
+        (aux.y <= (spaceship->y + spaceship->height)))
+    {
+        spaceship->state = DEAD_ENEMY;
+
+        int scores[3];
+        scores[0] = 50;
+        scores[1] = 150;
+        scores[2] = 300;
+
+        int random_score = rand() % 3;
+        player->score += scores[random_score];
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES], ENEMY *spaceship)
 {
     if (p->shots == NULL)
         return; // se não houver tiros, ignorar
@@ -250,7 +274,7 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE
         i++;
         aux->y -= PLAYER_SHOT_SPEED;
 
-        if ((aux->y <= 0) || kill_enemy(enemies, aux, p) || obstacle_collision(obstacles, *aux, 0))
+        if ((aux->y <= 0) || kill_enemy(enemies, aux, p) || obstacle_collision(obstacles, *aux, 0) || red_spaceship_collision(spaceship, *aux, p))
             delete_shot(i, &p->shots);
 
         aux = aux->next;

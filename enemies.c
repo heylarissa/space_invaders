@@ -135,10 +135,12 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
+
         {
+            draw_enemies_shots(enemies[i][j], sprites);
+
             if (enemies[i][j].state != DEAD_ENEMY)
             {
-                draw_enemies_shots(enemies[i][j], sprites);
 
                 if (enemies[i][j].type == weak)
                 {
@@ -178,6 +180,18 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
     spaceship->height = al_get_bitmap_height(sprites->spaceship) * 0.5;
     spaceship->direction = RIGHT;
     spaceship->shots = NULL;
+    spaceship->state = ENEMY_STATE_ONE;
+}
+
+void draw_red_spaceship(SPRITES *sprites, ENEMY spaceship)
+{
+    if (spaceship.state != DEAD_ENEMY)
+        al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
+                              al_get_bitmap_width(sprites->spaceship),
+                              al_get_bitmap_height(sprites->spaceship),
+                              spaceship.x, spaceship.y,
+                              al_get_bitmap_width(sprites->spaceship) * 0.5,
+                              al_get_bitmap_height(sprites->spaceship) * 0.5, 0); // desenha nave vermelha
 }
 
 /* Movimenta inimigos */
