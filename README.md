@@ -61,9 +61,9 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace
 - [x] Inimigos se movem em bloco, para a direita e esquerda (15 pts) - OK  
 - [ ] Projéteis da nave podem se chocar com os dos inimigos e se anularem (10 pts) ***********  
 - [ ] Inserção de colunas vazias entre os inimigos (5 pts)  
-- [ ] Progressão de dificuldade a cada nível (pelo menos 4 progressões) (10 pts) ***********  
+- [x] Progressão de dificuldade a cada nível (pelo menos 4 progressões) (10 pts) - OK  
 - [ ] Implementação de poderes bônus (dois tiros ou escudo) temporários para a nave (15 pts) ******* A cada x frames, dá os poderes
 - [ ] Implementação de novos tipos de inimigos, incluindo novo modelo de ataque e nova imagem (5 pts cada, no máximo 2 novos)  
 - [ ] Implementação de um inimigo que atira projéteis em diagonal e que ricocheteiam na borda do mapa (15 pts)  
 - [ ] Salvar e carregar jogo salvo (10 pts)  
-- [x] Nave inimiga (vermelha) com pontuação extra atrás de todos os inimigos [10 PONTOS] - meio OK *************  
+- [x] Nave inimiga (vermelha) com pontuação extra atrás de todos os inimigos [10 PONTOS] - OK  
