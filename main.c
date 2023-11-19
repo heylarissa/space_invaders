@@ -84,6 +84,12 @@ int main()
 
     GameState gameState = MENU;
 
+    /* logging */
+    FILE* fptr;
+    fptr = fopen("tshut.log", "w");
+    fprintf(fptr, "Start logging\n");
+
+
     while (!done)
     {
         al_wait_for_event(queue, &event);
@@ -91,31 +97,42 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            if (key[ALLEGRO_KEY_ESCAPE])
+            fprintf(fptr, "ALLEGRO_EVENT_TIMER\n"); // logging
+            if (key[ALLEGRO_KEY_ESCAPE]) 
                 done = true;
             switch (gameState)
             {
             case MENU:
+                fprintf(fptr, "MENU\n"); // logging
                 if ((key[ALLEGRO_KEY_SPACE] || key[ALLEGRO_KEY_ENTER]))
                 {
                     gameState = GAME;
+                    fprintf(fptr, "gameState=GAME\n"); // logging
                 }
                 break;
             case PAUSED:
+                fprintf(fptr, "PAUSED\n"); // logging
                 if (key[ALLEGRO_KEY_P])
                 {
                     gameState = GAME;
+                    fprintf(fptr, "gameState=GAME\n"); // logging
                 }
                 break;
             case GAME_OVER:
-                if (key[ALLEGRO_KEY_ESCAPE])
+                fprintf(fptr, "GAME_OVER\n"); // logging
+                if (key[ALLEGRO_KEY_ESCAPE]) {
+                    fprintf(fptr, "ALLEGRO_KEY_ESCAPE done=true\n"); // logging
                     done = true;
+                }
                 break;
             case GAME:
                 frame_count++;
+                fprintf(fptr, "frame_count %d\n", frame_count); // logging
 
-                if (player.lives == 0)
+                if (player.lives == 0) {
+                    fprintf(fptr, "player.lives %d - gameState=GAME_OVER\n", player.lives); // logging
                     gameState = GAME_OVER;
+                }
 
                 /* player logic */
                 update_player_shots(&player, enemies, obstacles);
