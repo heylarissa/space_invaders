@@ -184,14 +184,18 @@ int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot, P
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
+            if (enemies[i][j].state == EXPLODE_ENEMY)
+            {
+                enemies[i][j].state = DEAD_ENEMY;
+            }
 
-            if ((enemies[i][j].state != DEAD_ENEMY) &&
+            if ((enemies[i][j].state != DEAD_ENEMY && enemies[i][j].state != EXPLODE_ENEMY) &&
                 (shot->x >= enemies[i][j].x) &&
                 (shot->x <= (enemies[i][j].x + enemies[i][j].width * ENEMY_RESIZE)) &&
                 (shot->y >= enemies[i][j].y) &&
                 (shot->y <= (enemies[i][j].y + enemies[i][j].height * ENEMY_RESIZE)))
             {
-                enemies[i][j].state = DEAD_ENEMY;
+                enemies[i][j].state = EXPLODE_ENEMY;
                 if (enemies[i][j].type == weak)
                 {
                     player->score += 10;

@@ -104,14 +104,14 @@ void draw_enemies_shots(ENEMY enemy, SPRITES *sprites)
         {
             if (enemy.shots->state == SHOT_STATE_ONE)
                 al_draw_filled_rectangle(enemy.shots->x, enemy.shots->y, enemy.shots->x + 5, enemy.shots->y + 20, WHITE);
-            else if (enemy.shots->state == SHOT_STATE_TWO)
+            else
                 al_draw_filled_rectangle(enemy.shots->x, enemy.shots->y, enemy.shots->x + 5, enemy.shots->y + 20, GREEN);
         }
         else if (enemy.type == intermed)
         {
             if (enemy.shots->state == SHOT_STATE_ONE)
                 scale_image(sprites->shot_intermed, enemy.shots->x, enemy.shots->y, 2);
-            else if (enemy.shots->state == SHOT_STATE_TWO)
+            else
                 al_draw_scaled_bitmap(sprites->shot_intermed, 0, 0,
                                       al_get_bitmap_width(sprites->shot_intermed),
                                       al_get_bitmap_height(sprites->shot_intermed),
@@ -123,7 +123,7 @@ void draw_enemies_shots(ENEMY enemy, SPRITES *sprites)
         {
             if (enemy.shots->state == SHOT_STATE_ONE)
                 scale_image(sprites->shot_strong, enemy.shots->x, enemy.shots->y, 1);
-            else if (enemy.shots->state == SHOT_STATE_TWO)
+            else
                 al_draw_bitmap(sprites->shot_strong, enemy.shots->x, enemy.shots->y, ALLEGRO_FLIP_HORIZONTAL);
         }
     }
@@ -136,9 +136,14 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            if (enemies[i][j].state != DEAD_ENEMY)
+            draw_enemies_shots(enemies[i][j], sprites);
+            if (enemies[i][j].state == EXPLODE_ENEMY)
             {
-                draw_enemies_shots(enemies[i][j], sprites);
+                scale_image(sprites->explosion_enemy, enemies[i][j].x + 5, enemies[i][j].y + enemies[i][j].height / 2, 2);
+            }
+
+            else if (enemies[i][j].state != DEAD_ENEMY)
+            {
 
                 if (enemies[i][j].type == weak)
                 {
@@ -188,7 +193,7 @@ void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            if (enemies[i][j].state != DEAD_ENEMY)
+            if (enemies[i][j].state != DEAD_ENEMY && enemies[i][j].state != EXPLODE_ENEMY)
                 enemies[i][j].state = !enemies[i][j].state;
 
             if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width * ENEMY_RESIZE) || (enemies[i][j].x < 0)) // encosta na borda

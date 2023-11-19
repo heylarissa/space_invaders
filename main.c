@@ -76,22 +76,24 @@ int main()
         case ALLEGRO_EVENT_TIMER:
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
+
             switch (gameState)
             {
             case MENU:
                 if ((key[ALLEGRO_KEY_SPACE] || key[ALLEGRO_KEY_ENTER]))
                     gameState = GAME;
-
                 break;
+
             case PAUSED:
                 if (key[ALLEGRO_KEY_P])
                     gameState = GAME;
-
                 break;
+
             case GAME_OVER:
                 if (key[ALLEGRO_KEY_ESCAPE])
                     done = true;
                 break;
+
             case GAME:
                 frame_count++;
                 game_logic(key, &player, &gameState, &frame_count, sprites, &spaceship, enemies, obstacles);
