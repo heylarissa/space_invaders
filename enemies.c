@@ -127,6 +127,7 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
     }
 }
 
+/* Inicializa nave vermelha */
 void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
 {
     spaceship->x = 0;
