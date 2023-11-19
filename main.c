@@ -13,7 +13,19 @@
 #include "player.h"
 #include "enemies.h"
 #include "obstacles.h"
-
+void game_pause(ALLEGRO_TIMER *timer, GameState *gameState)
+{
+    if (al_get_timer_started(timer))
+    {
+        al_stop_timer(timer);
+        *gameState = PAUSED;
+    }
+    else
+    {
+        al_start_timer(timer);
+        *gameState = GAME;
+    }
+}
 int main()
 {
     // TODO: Refatorar toda a inicialização do allegro para uma única struct
@@ -89,13 +101,12 @@ int main()
                     done = true;
                 break;
 
+            case PAUSED:
+                break;
+
             case GAME:
                 frame_count++;
-                if (key[ALLEGRO_KEY_P]) // pause
-                {
-                    gameState = PAUSED;
-                    al_stop_timer(timer);
-                }
+
                 game_logic(key, &player, &gameState, &frame_count, sprites, &spaceship, enemies, obstacles);
                 if (checkAllEnemiesDefeated(enemies))
                 {
@@ -105,16 +116,6 @@ int main()
                     start_new_round(enemies, &spaceship, sprites, &player, obstacles);
                     currentRound++;
                 }
-                break;
-
-            case PAUSED:
-                if (key[ALLEGRO_KEY_ENTER])
-                {
-                    gameState = GAME;
-                    al_start_timer(timer);
-                    redraw = true;
-                }
-
                 break;
             }
 
@@ -131,6 +132,10 @@ int main()
 
         case ALLEGRO_EVENT_KEY_UP: // tecla liberada
             key[event.keyboard.keycode] &= KEY_RELEASED;
+            if (event.keyboard.keycode == ALLEGRO_KEY_P)
+            {
+                game_pause(timer, &gameState);
+            }
             break;
 
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
