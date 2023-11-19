@@ -2,6 +2,7 @@
 #include "game.h"
 #include "utils.h"
 #include "display.h"
+#include "enemies.h"
 
 /* Inicializa obstáculos */
 void init_obstacles(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites)
@@ -19,6 +20,21 @@ void init_obstacles(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites)
         obstacles[i].w = al_get_bitmap_width(sprites->obstacles[0]);
         obstacles[i].h = al_get_bitmap_height(sprites->obstacles[0]);
     }
+}
+
+bool obstacle_collision(OBSTACLE obstacles[NUM_OBSTACLES], SHOT shot, int enemy_type)
+{
+    for (int i = 0; i < NUM_OBSTACLES; i++)
+        if ((shot.x >= obstacles[i].x) && (shot.x <= (obstacles[i].x + obstacles[i].w) && (shot.y <= obstacles[i].y)))
+        {
+            if (enemy_type == weak || enemy_type == 0)
+                obstacles[i].life--;
+            else
+                obstacles[i].life -= 2;
+            return TRUE;
+        }
+
+    return FALSE;
 }
 
 /* Desenha obstáculos */

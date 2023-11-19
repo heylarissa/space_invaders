@@ -11,6 +11,7 @@
 #include "game.h"
 #include "enemies.h"
 #include "shots.h"
+#include "obstacles.h"
 
 void draw_player_shots(SHOT *shots)
 {
@@ -81,7 +82,7 @@ bool player_collision(PLAYER player, ENEMY enemy)
 }
 
 /* Atualiza posição dos tiros inimigos */
-void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
+void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
 {
     int shooting_count = 0;
 
@@ -101,6 +102,10 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
                 else if (player_collision(*player, enemies[i][j]))
                 {
                     player->lives--;
+                    delete_shot = TRUE;
+                }
+                else if (obstacle_collision(obstacles, *enemies[i][j].shots, enemies[i][j].type))
+                {
                     delete_shot = TRUE;
                 }
 
@@ -190,10 +195,11 @@ int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
     return FALSE;
 }
 
-void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE])
+void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES])
 {
     if (p->shots == NULL)
         return; // se não houver tiros, ignorar
+
     SHOT *aux;
     int i = -1;
     aux = p->shots;
@@ -202,12 +208,12 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE])
         i++;
         aux->y -= SIZE_PLAYER / 2;
 
-        if ((aux->y <= 0) || kill_enemy(enemies, aux, p))
-        {
+        if ((aux->y <= 0) || kill_enemy(enemies, aux, p) || obstacle_collision(obstacles, *aux, 0))
             delete_shot(i, &p->shots);
-        }
+
         aux = aux->next;
     }
+    return;
 }
 
 void create_player_shot(PLAYER *p)

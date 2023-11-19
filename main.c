@@ -103,13 +103,13 @@ int main()
                     gameover = TRUE;
 
                 /* player logic */
-                update_player_shots(&player, enemies);
+                update_player_shots(&player, enemies, obstacles);
 
                 /* enemy logic */
                 if (frame_count % 30 == 0)
                     update_enemies(enemies, spaceship);
                 else if (frame_count % 5 == 0)
-                    update_enemies_shots(enemies, &player);
+                    update_enemies_shots(enemies, &player, obstacles);
 
                 /* interação com teclado */
                 if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
