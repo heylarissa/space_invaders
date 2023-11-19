@@ -41,7 +41,7 @@ int get_enemy_type(int line)
 /* Inicializa os inimigos para início do jogo */
 void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
-    float height = 2 * MARGIN - SIZE_ENEMY + 20;
+    float height = 2 * MARGIN;
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         int type = get_enemy_type(i);
@@ -49,12 +49,12 @@ void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
         {
             enemies[i][j].direction = LEFT;
             enemies[i][j].type = type;
-            enemies[i][j].state = ENEMY_STATE_ONE; // define a imagem a exibir do inimigo
+            enemies[i][j].state = ENEMY_STATE_ONE;
 
             if (((i == 0) && (j == 0)) | (j == 0))
                 enemies[i][j].x = 0;
             else
-                enemies[i][j].x = enemies[i][j - 1].x + SIZE_ENEMY + ENEMY_SPACING;
+                enemies[i][j].x = enemies[i][j - 1].x + (enemies[i][j - 1].width * ENEMY_RESIZE) + ENEMY_SPACING;
 
             enemies[i][j].shots = NULL;
 

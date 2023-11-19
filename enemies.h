@@ -16,11 +16,10 @@
 #define ENEMIES_PER_LINE 11
 #define ENEMY_SPEED 30
 #define ENEMY_RESIZE 2
-#define SIZE_ENEMY 25
+
 #define ENEMY_STATE_ONE 0
 #define ENEMY_STATE_TWO 1
 #define DEAD_ENEMY (-1)
-#define IGNORE_ENEMY (-2)
 
 #define ENEMY_SHOOTING_LIMIT 2
 
