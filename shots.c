@@ -80,17 +80,6 @@ bool player_collision(PLAYER player, ENEMY enemy)
     return FALSE; // sem colisão
 }
 
-void delete_enemy_shot(SHOT *head)
-{
-    SHOT *shot;
-    shot = head;
-    if (head == NULL || shot == NULL)
-        return;
-
-    head = head->next;
-    free(shot);
-    return;
-}
 
 /* Atualiza posição dos tiros inimigos */
 void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
@@ -103,16 +92,25 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
         {
             if (enemies[i][j].shots != NULL)
             {
-                enemies[i][j].shots->y += enemies[i][j].height;
+                enemies[i][j].shots->y += ENEMY_SHOT_SPEED;
+                bool delete_shot = FALSE;
 
-                if (player_collision(*player, enemies[i][j]))
-                {
-                    player->lives--;
-                    delete_enemy_shot(enemies[i][j].shots);
-                }
                 if (enemies[i][j].shots->y >= TOTAL_HEIGHT) // exclui o tiro
                 {
+                    delete_shot = TRUE;
+                }
+                else if (player_collision(*player, enemies[i][j]))
+                {
+                    player->lives--;
+                    delete_shot = TRUE;
+                }
+
+                if (delete_shot)
+                {
+                    SHOT *aux;
+                    aux = enemies[i][j].shots;
                     enemies[i][j].shots = NULL;
+                    free(aux);
                 }
             }
         }
@@ -205,7 +203,7 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE])
         i++;
         aux->y -= SIZE_PLAYER / 2;
 
-        if ((aux->y <= 0) | kill_enemy(enemies, aux, p))
+        if ((aux->y <= 0) || kill_enemy(enemies, aux, p))
         {
             delete_shot(i, &p->shots);
         }

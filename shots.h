@@ -5,6 +5,7 @@
 #include "player.h"
 #include "game.h"
 
+#define ENEMY_SHOT_SPEED 10
 int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots);
 bool shot_in_this_column(SHOT *shots, PLAYER p);
 void delete_shot(int position, SHOT **head);
