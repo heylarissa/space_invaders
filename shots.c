@@ -133,6 +133,7 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
         {
             if (enemies[i][j].shots != NULL)
             {
+                enemies[i][j].shots->state = !enemies[i][j].shots->state;
                 enemies[i][j].shots->y += ENEMY_SHOT_SPEED;
                 bool delete_shot = FALSE;
 
@@ -172,6 +173,7 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
             enemies[random_line][random_column].shots->x = (enemies[random_line][random_column].x + enemies[random_line][random_column].width * ENEMY_RESIZE / 2);
             enemies[random_line][random_column].shots->y = (enemies[random_line][random_column].y + enemies[random_line][random_column].height * ENEMY_RESIZE);
             enemies[random_line][random_column].shots->direction = DOWN;
+            enemies[random_line][random_column].shots->state = SHOT_STATE_ONE;
             shooting_count++;
         }
     }

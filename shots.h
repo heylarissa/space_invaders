@@ -8,6 +8,10 @@
 
 #define ENEMY_SHOT_SPEED 10
 
+#define SHOT_STATE_ONE 0
+#define SHOT_STATE_TWO 1
+
+
 int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots);
 bool shot_in_this_column(SHOT *shots, int x);
 void delete_shot(int position, SHOT **head);

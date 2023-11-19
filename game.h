@@ -37,6 +37,7 @@ typedef struct SPRITES_T
 typedef struct shot
 {
     int direction;
+    int state;
     float x, y;
     struct shot *next;
 } SHOT;

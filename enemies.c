@@ -100,7 +100,12 @@ void destroy_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 void draw_enemies_shots(SHOT *shot)
 {
     if (shot != NULL)
-        al_draw_filled_rectangle(shot->x, shot->y, shot->x - 5, shot->y - 20, WHITE);
+    {
+        if (shot->state == SHOT_STATE_ONE)
+            al_draw_filled_rectangle(shot->x, shot->y, shot->x + 5, shot->y + 20, WHITE);
+        else if (shot->state == SHOT_STATE_ONE)
+            al_draw_filled_rectangle(shot->x, shot->y, shot->x + 5, shot->y + 20, GREEN);
+    }
 }
 
 /* Desenha inimigos */
