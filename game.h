@@ -15,6 +15,8 @@
 #define UP 1
 #define DOWN (-1)
 
+#define MAX_EXPLOSION_FRAMES 2
+
 typedef struct SPRITES_T
 {
     ALLEGRO_BITMAP *_sheet;

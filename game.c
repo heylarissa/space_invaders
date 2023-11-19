@@ -75,7 +75,6 @@ void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
     for (int i = 0; i < lives; i++)
     {
         pos_x = pos_x + al_get_bitmap_width(live) * 0.5;
-        // al_draw_bitmap(live, pos_x, pos_y, 0);
         scale_image(live, pos_x, pos_y, 0.5);
     }
 }

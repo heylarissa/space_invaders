@@ -97,15 +97,13 @@ int main()
             {
             case MENU:
                 if ((key[ALLEGRO_KEY_SPACE] || key[ALLEGRO_KEY_ENTER]))
-                {
                     gameState = GAME;
-                }
+
                 break;
             case PAUSED:
                 if (key[ALLEGRO_KEY_P])
-                {
                     gameState = GAME;
-                }
+
                 break;
             case GAME_OVER:
                 if (key[ALLEGRO_KEY_ESCAPE])
@@ -116,6 +114,18 @@ int main()
 
                 if (player.lives == 0)
                     gameState = GAME_OVER;
+
+                if (player.state == explode)
+                {
+                    player.explosion_frame++;
+
+                    if (player.explosion_frame > MAX_EXPLOSION_FRAMES)
+                    {
+                        player.state = alive;
+                        player.explosion_frame = 0;
+                        player.x = 50;
+                    }
+                }
 
                 /* player logic */
                 update_player_shots(&player, enemies, obstacles);
@@ -138,6 +148,7 @@ int main()
                 {
                     if (player.lives < 5)
                         player.lives++;
+
                     start_new_round(enemies, &spaceship, sprites, &player, obstacles);
                     currentRound++;
                 }
@@ -152,6 +163,20 @@ int main()
 
         case ALLEGRO_EVENT_KEY_DOWN:                               // tecla pressionada
             key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED; // armazena no vetor na posição respectiva ao keycode da tecla
+
+            if (event.keyboard.keycode == ALLEGRO_KEY_P)
+            {
+                if (gameState == GAME)
+                {
+                    gameState = PAUSED;
+                    al_stop_timer(timer);
+                }
+                else if (gameState == PAUSED)
+                {
+                    gameState = GAME;
+                    al_start_timer(timer);
+                }
+            }
             break;
 
         case ALLEGRO_EVENT_KEY_UP: // tecla liberada
@@ -187,10 +212,10 @@ int main()
                 al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "PAUSED");
                 al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS P TO CONTINUE");
+                al_flip_display();
                 break;
 
             case GAME:
-
                 /* desenha obstáculos */
                 draw_obstacles(obstacles, sprites);
 

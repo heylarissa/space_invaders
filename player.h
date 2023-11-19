@@ -23,6 +23,7 @@ typedef struct player
     int score;
     int lives;
     int state;
+    int explosion_frame;
     int w, h;
     float speed;
     SHOT *shots; // lista de tiros ativos
