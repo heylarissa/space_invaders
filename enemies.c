@@ -7,6 +7,7 @@
 #include "utils.h"
 #include <time.h>
 
+/* Retorna falso se algum inimigo estiver vivo */
 bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
@@ -15,11 +16,11 @@ bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE])
         {
             if (enemies[i][j].state != DEAD_ENEMY)
             {
-                return false; // Se algum inimigo ainda estiver vivo, retorna falso
+                return false;
             }
         }
     }
-    return true; // Todos os inimigos estão mortos
+    return true;
 }
 
 /* Retorna o tipo do inimigo com base na linha em que ele está */
