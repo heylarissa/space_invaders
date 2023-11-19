@@ -6,7 +6,8 @@
 #include "obstacles.h"
 
 #define ENEMY_SHOT_SPEED 10
-
+#define SHOT_WIDTH 10
+#define SHOT_HEIGHT 20
 #define SHOT_STATE_ONE 0
 #define SHOT_STATE_TWO 1
 

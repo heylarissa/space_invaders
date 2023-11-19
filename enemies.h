@@ -50,4 +50,5 @@ void move_red_spaceship(ENEMY *spaceship);
 bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship);
 void destroy_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 void draw_red_spaceship(SPRITES *sprites, ENEMY spaceship);
+bool shots_collision(SHOT aux, ENEMY (*enemies)[ENEMIES_PER_LINE]);
 #endif

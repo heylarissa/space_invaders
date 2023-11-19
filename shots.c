@@ -240,6 +240,8 @@ int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
 
     return FALSE;
 }
+
+/* Verifica colisão com nave vermelha inimiga */
 bool red_spaceship_collision(ENEMY *spaceship, SHOT aux, PLAYER *player)
 {
 
@@ -265,6 +267,36 @@ bool red_spaceship_collision(ENEMY *spaceship, SHOT aux, PLAYER *player)
     return FALSE;
 }
 
+/* Verifica colisão entre tiros */
+bool shots_collision(SHOT aux, ENEMY (*enemies)[ENEMIES_PER_LINE])
+{
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+            if (enemies[i][j].shots != NULL)
+            {
+                if (( (aux.x >= enemies[i][j].shots->x && aux.x <= enemies[i][j].shots->x + SHOT_WIDTH) 
+                        || (aux.x + SHOT_WIDTH >= enemies[i][j].shots->x && aux.x <= enemies[i][j].shots->x + SHOT_WIDTH)
+                 ) &&
+
+                    ((aux.y >= enemies[i][j].shots->y && aux.y <= enemies[i][j].shots->y + SHOT_HEIGHT) || 
+                    (aux.y + SHOT_HEIGHT >= enemies[i][j].shots->y && aux.y <= enemies[i][j].shots->y + SHOT_HEIGHT)
+                    ))
+                {
+                    SHOT *temp;
+                    temp = enemies[i][j].shots;
+                    enemies[i][j].shots = NULL;
+                    free(temp);
+                    return TRUE;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+/* Atualiza tiros do jogador */
 void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES], ENEMY *spaceship)
 {
     if (p->shots == NULL)
@@ -278,7 +310,10 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE
         i++;
         aux->y -= PLAYER_SHOT_SPEED;
 
-        if ((aux->y <= 0) || kill_enemy(enemies, aux, p) || obstacle_collision(obstacles, *aux, 0) || red_spaceship_collision(spaceship, *aux, p))
+        if ((aux->y <= 0) ||
+            kill_enemy(enemies, aux, p) ||
+            obstacle_collision(obstacles, *aux, 0) ||
+            red_spaceship_collision(spaceship, *aux, p) || shots_collision(*aux, enemies))
             delete_shot(i, &p->shots);
 
         aux = aux->next;
