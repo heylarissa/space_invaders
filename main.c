@@ -76,24 +76,25 @@ int main()
         case ALLEGRO_EVENT_TIMER:
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
+
             switch (gameState)
             {
             case MENU:
                 if ((key[ALLEGRO_KEY_SPACE] || key[ALLEGRO_KEY_ENTER]))
                     gameState = GAME;
-
                 break;
-            case PAUSED:
-                if (key[ALLEGRO_KEY_P])
-                    gameState = GAME;
 
-                break;
             case GAME_OVER:
                 if (key[ALLEGRO_KEY_ESCAPE])
                     done = true;
                 break;
+
+            case PAUSED:
+                break;
+
             case GAME:
                 frame_count++;
+
                 game_logic(key, &player, &gameState, &frame_count, sprites, &spaceship, enemies, obstacles);
                 if (checkAllEnemiesDefeated(enemies))
                 {
@@ -115,23 +116,14 @@ int main()
         case ALLEGRO_EVENT_KEY_DOWN:                               // tecla pressionada
             key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED; // armazena no vetor na posição respectiva ao keycode da tecla
 
-            if (event.keyboard.keycode == ALLEGRO_KEY_P) // pause
-            {
-                if (gameState == GAME)
-                {
-                    gameState = PAUSED;
-                    al_stop_timer(timer);
-                }
-                else if (gameState == PAUSED)
-                {
-                    gameState = GAME;
-                    al_start_timer(timer);
-                }
-            }
             break;
 
         case ALLEGRO_EVENT_KEY_UP: // tecla liberada
             key[event.keyboard.keycode] &= KEY_RELEASED;
+            if (event.keyboard.keycode == ALLEGRO_KEY_P)
+            {
+                game_pause(timer, &gameState);
+            }
             break;
 
         case ALLEGRO_EVENT_DISPLAY_CLOSE:

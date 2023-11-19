@@ -31,7 +31,7 @@ void init_sprites(SPRITES *sprites)
     sprites->player = select_sprite(sprites->_sheet, 350, 1160, 110, 68);
 
     sprites->explosion_player = select_sprite(sprites->_sheet, 364, 275, (400 - 364), (290 - 275));
-    sprites->explosion_enemy = select_sprite(sprites->_sheet, 436, 275, (464 - 436), (290 - 292));
+    sprites->explosion_enemy = select_sprite(sprites->_sheet, 436, 275, (465 - 436), (290 - 275));
 
     sprites->shot_intermed = select_sprite(sprites->_sheet, 410, 276, (420 - 410), (289 - 276));
     sprites->shot_strong = select_sprite(sprites->_sheet, 379, 1903, (394 - 379), (1928 - 1903));

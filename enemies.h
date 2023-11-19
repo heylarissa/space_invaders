@@ -19,6 +19,7 @@
 #define ENEMY_STATE_ONE 0
 #define ENEMY_STATE_TWO 1
 #define DEAD_ENEMY (-1)
+#define EXPLODE_ENEMY (-2)
 
 #define ENEMY_SHOOTING_LIMIT 2
 
@@ -36,7 +37,7 @@ typedef struct enemy // apenas 2 inimigos podem atirar
     int type;          // existem 3 tipos de inimigos + spaceship - define qual sprite será exibida
     SHOT *shots;       // tiro do inimigo - um por vez
     int direction;     // direita / esquerda
-    int state;         // vivo img 1, vivo img 2 e quando morre.
+    int state;
 } ENEMY;
 
 void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE]);
@@ -47,5 +48,5 @@ int get_enemy_type(int line);
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 void move_red_spaceship(ENEMY *spaceship);
 bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE]);
-void destroy_enemies (ENEMY (*enemies)[ENEMIES_PER_LINE]);
+void destroy_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 #endif
