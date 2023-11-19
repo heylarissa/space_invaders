@@ -54,7 +54,11 @@ void draw_game(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites, ALLEGRO_FONT
     // desenha player
     draw_player(sprites, *player);
 }
-void game_logic(unsigned char key[], PLAYER *player, GameState *gameState, int *frame_count, SPRITES *sprites, ENEMY *spaceship, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES])
+
+void game_logic(unsigned char key[], PLAYER *player, GameState *gameState,
+                int *frame_count, SPRITES *sprites, ENEMY *spaceship,
+                ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES]
+                )
 {
     if (player->lives == 0)
         *gameState = GAME_OVER;
@@ -104,7 +108,6 @@ void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, i
         break;
 
     case GAME:
-
         draw_game(obstacles, sprites, font, player, currentRound, enemies, spaceship);
         break;
     }

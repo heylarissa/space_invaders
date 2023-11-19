@@ -37,7 +37,7 @@ typedef struct enemy // apenas 2 inimigos podem atirar
     int type;          // existem 3 tipos de inimigos + spaceship - define qual sprite será exibida
     SHOT *shots;       // tiro do inimigo - um por vez
     int direction;     // direita / esquerda
-    int state;         // vivo img 1, vivo img 2 e quando morre.
+    int state;
 } ENEMY;
 
 void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE]);

@@ -184,10 +184,10 @@ int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot, P
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            if (enemies[i][j].state == EXPLODE_ENEMY)
-            {
-                enemies[i][j].state = DEAD_ENEMY;
-            }
+            // if (enemies[i][j].state == EXPLODE_ENEMY)
+            // {
+            //     enemies[i][j].state = DEAD_ENEMY;
+            // }
 
             if ((enemies[i][j].state != DEAD_ENEMY && enemies[i][j].state != EXPLODE_ENEMY) &&
                 (shot->x >= enemies[i][j].x) &&
