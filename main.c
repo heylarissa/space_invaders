@@ -64,7 +64,6 @@ int main()
 
     bool done = false;
     bool redraw = true;
-    int menu = TRUE;
 
     ALLEGRO_EVENT event;
     SPRITES *sprites = (SPRITES *)malloc(sizeof(SPRITES));
@@ -77,11 +76,13 @@ int main()
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
+
     int frame_count = 0;
 
     al_start_timer(timer);
     int currentRound = 1;
-    bool gameover = FALSE;
+
+    GameState gameState = MENU; // Inicializa o estado do jogo como MENU
 
     while (!done)
     {
@@ -92,15 +93,29 @@ int main()
         case ALLEGRO_EVENT_TIMER:
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
-
-            if ((menu == TRUE) && ((key[ALLEGRO_KEY_SPACE]) || (key[ALLEGRO_KEY_ENTER])))
-                menu = FALSE;
-            else if (!gameover)
+            switch (gameState)
             {
+            case MENU:
+                if ((key[ALLEGRO_KEY_SPACE] || key[ALLEGRO_KEY_ENTER]))
+                {
+                    gameState = GAME;
+                }
+                break;
+            case PAUSED:
+                if (key[ALLEGRO_KEY_P])
+                {
+                    gameState = GAME;
+                }
+                break;
+            case GAME_OVER:
+                if (key[ALLEGRO_KEY_ESCAPE])
+                    done = true;
+                break;
+            case GAME:
                 frame_count++;
 
                 if (player.lives == 0)
-                    gameover = TRUE;
+                    gameState = GAME_OVER;
 
                 /* player logic */
                 update_player_shots(&player, enemies, obstacles);
@@ -126,6 +141,7 @@ int main()
                     start_new_round(enemies, &spaceship, sprites, &player, obstacles);
                     currentRound++;
                 }
+                break;
             }
 
             for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
@@ -153,21 +169,28 @@ int main()
         if (redraw && al_is_event_queue_empty(queue))
         {
             al_clear_to_color(BLACK);
-
-            if (menu)
+            switch (gameState)
             {
+            case MENU:
+
                 al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
                 al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
-            }
-            else if (gameover)
-            {
+                break;
+            case GAME_OVER:
+
                 al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
                 al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS ESC OR CLOSE THE WINDOW");
-            }
-            else
-            {
+                break;
+            case PAUSED:
+                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+                al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "PAUSED");
+                al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS P TO CONTINUE");
+
+                break;
+            case GAME:
+
                 /* desenha obstáculos */
                 draw_obstacles(obstacles, sprites);
 
@@ -190,6 +213,7 @@ int main()
                 draw_player(sprites, player);
 
                 al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
+                break;
             }
             al_flip_display();
 
@@ -197,9 +221,9 @@ int main()
         }
     }
 
-    destroy_sprites(sprites);
     destroy_enemies(enemies);
     destroy_player(&player);
+    destroy_sprites(sprites);
     al_destroy_font(font);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
