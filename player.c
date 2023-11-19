@@ -15,6 +15,7 @@ void init_player(PLAYER *player, SPRITES *sprites)
     player->score = 0;
     player->lives = 3;
     player->shots = NULL;
+    player->state = alive;
     player->w = al_get_bitmap_width(sprites->player);
     player->h = al_get_bitmap_height(sprites->player);
 }

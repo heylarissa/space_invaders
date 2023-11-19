@@ -12,11 +12,17 @@
 #define PLAYER_SHOT_SPEED 10
 #define PLAYER_SPEED 15
 
+enum PLAYER_STATE {
+    alive,
+    explode
+};
+
 typedef struct player
 {
     float x, y;
     int score;
     int lives;
+    int state;
     int w, h;
     float speed;
     SHOT *shots; // lista de tiros ativos

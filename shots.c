@@ -33,10 +33,8 @@ bool shot_in_this_column(SHOT *shots, int posicao_entidade)
 
     while (aux != NULL)
     {
-        if (aux->x == posicao_entidade + SIZE_PLAYER + 5)
-        {
+        if (aux->x == posicao_entidade)
             return TRUE;
-        }
         aux = aux->next;
     }
 
@@ -145,6 +143,7 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
                 {
                     player->lives--;
                     delete_shot = TRUE;
+                    player->state = explode;
                 }
                 else if (obstacle_collision(obstacles, *enemies[i][j].shots, enemies[i][j].type))
                 {
@@ -161,8 +160,8 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
             }
         }
     }
-
-    while (!enemy_active_shots(enemies, &shooting_count)) // Enquanto não tem 2 tiros acontecendo
+    int max_retries = 0;
+    while (!enemy_active_shots(enemies, &shooting_count) && max_retries <= (NUM_ENEMIES_LINES * ENEMIES_PER_LINE)) // Enquanto não tem 2 tiros acontecendo
     {
         int random_line = rand() % NUM_ENEMIES_LINES;
         int random_column = rand() % ENEMIES_PER_LINE;
@@ -176,6 +175,7 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
             enemies[random_line][random_column].shots->state = SHOT_STATE_ONE;
             shooting_count++;
         }
+        max_retries++;
     }
 }
 
@@ -261,7 +261,7 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE
 
 void create_player_shot(PLAYER *p)
 {
-    if (!shot_in_this_column(p->shots, p->x))
+    if (!shot_in_this_column(p->shots, (p->x + SIZE_PLAYER + 5)))
     {
         SHOT *new;
         new = malloc(sizeof(SHOT));
