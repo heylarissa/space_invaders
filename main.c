@@ -95,7 +95,7 @@ int main()
             case GAME:
                 frame_count++;
 
-                game_logic(key, &player, &gameState, &frame_count, sprites, &spaceship, enemies, obstacles);
+                game_logic(key, &player, &gameState, &frame_count, sprites, &spaceship, enemies, obstacles, currentRound);
                 if (checkAllEnemiesDefeated(enemies))
                 {
                     if (player.lives < 5)
