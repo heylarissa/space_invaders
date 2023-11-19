@@ -21,6 +21,19 @@ void start_new_round(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRIT
     init_obstacles(obstacles, sprites);
 }
 
+void destroy_game(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player,
+                  SPRITES *sprites, ALLEGRO_FONT *font, ALLEGRO_TIMER *timer,
+                  ALLEGRO_EVENT_QUEUE *queue, ALLEGRO_DISPLAY *disp)
+{
+    destroy_enemies(enemies);
+    destroy_player(player);
+    destroy_sprites(sprites);
+    al_destroy_font(font);
+    al_destroy_timer(timer);
+    al_destroy_event_queue(queue);
+    al_destroy_display(disp);
+}
+
 void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, OBSTACLE obstacles[NUM_OBSTACLES])
 {
     srand((unsigned int)time(NULL));
@@ -29,6 +42,31 @@ void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaces
     init_spaceship(spaceship, sprites);
     init_enemies(sprites, enemies);
     init_obstacles(obstacles, sprites);
+}
+
+void draw_game(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites, ALLEGRO_FONT *font, PLAYER *player, int currentRound, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY spaceship)
+{
+    /* desenha obstáculos */
+    draw_obstacles(obstacles, sprites);
+
+    // desenha tela
+    al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player->score);                               // score do player
+    draw_lives(player->lives, sprites->player, font);                                             // vidas do player
+    al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound);                              // score do player
+    al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
+
+    // desenha inimigos
+    al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
+                          al_get_bitmap_width(sprites->spaceship),
+                          al_get_bitmap_height(sprites->spaceship),
+                          spaceship.x, spaceship.y,
+                          al_get_bitmap_width(sprites->spaceship) * 0.5,
+                          al_get_bitmap_height(sprites->spaceship) * 0.5, 0); // desenha nave vermelha
+
+    draw_enemies(enemies, sprites);
+
+    // desenha player
+    draw_player(sprites, *player);
 }
 
 int main()
@@ -111,7 +149,6 @@ int main()
                 break;
             case GAME:
                 frame_count++;
-
                 if (player.lives == 0)
                     gameState = GAME_OVER;
 
@@ -121,14 +158,15 @@ int main()
                     player.x = 50;
                 }
 
-                /* player logic */
-                update_player_shots(&player, enemies, obstacles);
-
                 /* enemy logic */
                 if (frame_count % 30 == 0)
                     update_enemies(enemies, &spaceship);
                 else if (frame_count % 5 == 0)
                     update_enemies_shots(enemies, &player, obstacles);
+
+                /* player logic */
+
+                update_player_shots(&player, enemies, obstacles);
 
                 /* interação com teclado */
                 if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
@@ -158,7 +196,7 @@ int main()
         case ALLEGRO_EVENT_KEY_DOWN:                               // tecla pressionada
             key[event.keyboard.keycode] = KEY_SEEN | KEY_RELEASED; // armazena no vetor na posição respectiva ao keycode da tecla
 
-            if (event.keyboard.keycode == ALLEGRO_KEY_P)
+            if (event.keyboard.keycode == ALLEGRO_KEY_P) // pause
             {
                 if (gameState == GAME)
                 {
@@ -210,28 +248,8 @@ int main()
                 break;
 
             case GAME:
-                /* desenha obstáculos */
-                draw_obstacles(obstacles, sprites);
 
-                // desenha tela
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);                                // score do player
-                draw_lives(player.lives, sprites->player, font);                                              // vidas do player
-                al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound);                              // score do player
-                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
-
-                // desenha inimigos
-                al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
-                                      al_get_bitmap_width(sprites->spaceship),
-                                      al_get_bitmap_height(sprites->spaceship),
-                                      spaceship.x, spaceship.y,
-                                      al_get_bitmap_width(sprites->spaceship) * 0.5,
-                                      al_get_bitmap_height(sprites->spaceship) * 0.5, 0); // desenha nave vermelha
-
-                draw_enemies(enemies, sprites);
-
-                // desenha player
-                draw_player(sprites, player);
-
+                draw_game(obstacles, sprites, font, &player, currentRound, enemies, spaceship);
                 break;
             }
             al_flip_display();
@@ -240,13 +258,7 @@ int main()
         }
     }
 
-    destroy_enemies(enemies);
-    destroy_player(&player);
-    destroy_sprites(sprites);
-    al_destroy_font(font);
-    al_destroy_timer(timer);
-    al_destroy_event_queue(queue);
-    al_destroy_display(disp);
+    destroy_game(enemies, &player, sprites, font, timer, queue, disp);
 
     return 0;
 }
