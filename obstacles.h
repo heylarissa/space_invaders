@@ -14,5 +14,5 @@ typedef struct obstacle
 } OBSTACLE;
 
 void init_obstacles(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites);
-
+void draw_obstacles(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites);
 #endif

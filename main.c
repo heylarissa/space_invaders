@@ -187,6 +187,9 @@ int main()
 
                 draw_enemies(enemies, sprites);
 
+                /* desenha obstáculos */
+                draw_obstacles(obstacles, sprites);
+
                 // desenha player
                 al_draw_bitmap(sprites->player, player.x, player.y, 0);
                 draw_player_shots(player.shots);

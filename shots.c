@@ -80,7 +80,6 @@ bool player_collision(PLAYER player, ENEMY enemy)
     return FALSE; // sem colisão
 }
 
-
 /* Atualiza posição dos tiros inimigos */
 void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
 {
@@ -124,8 +123,8 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
         if (enemies[random_line][random_column].shots == NULL) // sem tiros ativos
         {
             enemies[random_line][random_column].shots = malloc(sizeof(SHOT));
-            enemies[random_line][random_column].shots->x = enemies[random_line][random_column].x;
-            enemies[random_line][random_column].shots->y = enemies[random_line][random_column].y;
+            enemies[random_line][random_column].shots->x = (enemies[random_line][random_column].x + enemies[random_line][random_column].width / 2);
+            enemies[random_line][random_column].shots->y = (enemies[random_line][random_column].y + enemies[random_line][random_column].height);
             enemies[random_line][random_column].shots->direction = DOWN;
             shooting_count++;
         }
