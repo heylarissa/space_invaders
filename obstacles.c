@@ -1,7 +1,6 @@
 #include "obstacles.h"
 #include "utils.h"
-#include "display.h"
-#include "enemies.h"
+
 
 /* Inicializa obstáculos */
 void init_obstacles(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites)

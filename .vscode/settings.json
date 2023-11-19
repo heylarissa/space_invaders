@@ -11,6 +11,7 @@
         "shots.h": "c",
         "utils.h": "c",
         "obstacles.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "allegro.h": "c"
     }
 }
