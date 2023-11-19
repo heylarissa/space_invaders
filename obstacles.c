@@ -26,6 +26,15 @@ void draw_obstacles(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites)
 {
     for (int i = 0; i < NUM_OBSTACLES; i++)
     {
-        scale_image(sprites->obstacles[0], obstacles[i].x, obstacles[i].y, 3);
+        if (obstacles[i].life <= 2)
+            scale_image(sprites->obstacles[4], obstacles[i].x, obstacles[i].y, 3);
+        else if (obstacles[i].life <= 4)
+            scale_image(sprites->obstacles[3], obstacles[i].x, obstacles[i].y, 3);
+        else if (obstacles[i].life <= 6)
+            scale_image(sprites->obstacles[2], obstacles[i].x, obstacles[i].y, 3);
+        else if (obstacles[i].life <= 8)
+            scale_image(sprites->obstacles[2], obstacles[i].x, obstacles[i].y, 3);
+        else
+            scale_image(sprites->obstacles[0], obstacles[i].x, obstacles[i].y, 3);
     }
 }
