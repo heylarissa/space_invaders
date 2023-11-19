@@ -24,14 +24,13 @@ void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaces
     init_obstacles(obstacles, sprites);
 }
 
+
 void startNewRound(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
 {
     init_spaceship(spaceship, sprites);
     init_enemies(sprites, enemies);
     init_obstacles(obstacles, sprites);
 }
-
-
 
 int main()
 {
@@ -102,9 +101,7 @@ int main()
                 frame_count++;
 
                 if (player.lives == 0)
-                {
                     gameover = TRUE;
-                }
 
                 /* player logic */
                 update_player_shots(&player, enemies);
@@ -171,6 +168,8 @@ int main()
             }
             else
             {
+                /* desenha obstáculos */
+                draw_obstacles(obstacles, sprites);
 
                 // desenha tela
                 al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);   // score do player
@@ -187,12 +186,8 @@ int main()
 
                 draw_enemies(enemies, sprites);
 
-                /* desenha obstáculos */
-                draw_obstacles(obstacles, sprites);
-
                 // desenha player
-                al_draw_bitmap(sprites->player, player.x, player.y, 0);
-                draw_player_shots(player.shots);
+                draw_player(sprites, player);
 
                 al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
             }
