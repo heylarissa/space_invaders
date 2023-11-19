@@ -26,14 +26,14 @@ void draw_player_shots(SHOT *shots)
     }
 }
 
-bool shot_in_this_column(SHOT *shots, int x)
+bool shot_in_this_column(SHOT *shots, int posicao_entidade)
 {
     SHOT *aux;
     aux = shots;
 
     while (aux != NULL)
     {
-        if (aux->x == x)
+        if (aux->x == posicao_entidade + SIZE_PLAYER + 5)
         {
             return TRUE;
         }
@@ -89,12 +89,12 @@ bool entity_in_front(ENEMY enemy, ENEMY (*enemies)[ENEMIES_PER_LINE])
         {
             if ((enemies[i][j].x == enemy.x && enemies[i][j].y > enemy.y)) // Entidade a frente
             {
-                return FALSE;
+                return TRUE;
             }
         }
     }
 
-    return TRUE;
+    return FALSE;
 }
 
 /* Retorna nimigo pode atirar */
@@ -106,7 +106,7 @@ bool enemy_can_shoot(ENEMY enemy, PLAYER player, ENEMY (*enemies)[ENEMIES_PER_LI
     if (enemy.type == weak)
     {
         // não atiram caso exista uma entidade à sua frente ou se já existir um projétil na coluna
-        can_shoot = entity_in_front(enemy, enemies) || !shot_in_this_column(enemy.shots, enemy.x);
+        can_shoot = (!entity_in_front(enemy, enemies) && !shot_in_this_column(enemy.shots, enemy.x));
     }
     else if (enemy.type == intermed)
     {
