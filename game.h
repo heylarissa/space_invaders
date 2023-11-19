@@ -51,6 +51,5 @@ typedef enum {
 void init_sprites(SPRITES *sprites);
 ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h);
 void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font);
-void delete_shot(int position, SHOT **head);
 void destroy_sprites(SPRITES *sprites);
 #endif

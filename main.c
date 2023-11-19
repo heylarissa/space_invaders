@@ -82,7 +82,7 @@ int main()
     al_start_timer(timer);
     int currentRound = 1;
 
-    GameState gameState = MENU; // Inicializa o estado do jogo como MENU
+    GameState gameState = MENU;
 
     while (!done)
     {
