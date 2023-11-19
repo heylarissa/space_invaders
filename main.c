@@ -31,20 +31,7 @@ void startNewRound(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES
     init_obstacles(obstacles, sprites);
 }
 
-bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE])
-{
-    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
-    {
-        for (int j = 0; j < ENEMIES_PER_LINE; j++)
-        {
-            if (enemies[i][j].state != DEAD_ENEMY)
-            {
-                return false; // Se algum inimigo ainda estiver vivo, retorna falso
-            }
-        }
-    }
-    return true; // Todos os inimigos estão mortos
-}
+
 
 int main()
 {
