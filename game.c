@@ -72,10 +72,10 @@ void game_logic(unsigned char key[], PLAYER *player, GameState *gameState, int *
         update_enemies_shots(enemies, player, obstacles);
 
     /* player logic */
-
     update_player_shots(player, enemies, obstacles);
     move_player(key, player);
 }
+
 void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, int currentRound, OBSTACLE obstacles[NUM_OBSTACLES], PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY spaceship)
 {
     switch (*gameState)
@@ -87,6 +87,10 @@ void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, i
         break;
 
     case GAME_OVER:
+        al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player->score);                               // score do player
+        draw_lives(player->lives, sprites->player, font);                                             // vidas do player
+        al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound);                              // score do player
+        al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
         al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
         al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
         al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS ESC OR CLOSE THE WINDOW");
