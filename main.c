@@ -167,14 +167,8 @@ int main()
                 /* player logic */
 
                 update_player_shots(&player, enemies, obstacles);
+                move_player(key, &player);
 
-                /* interação com teclado */
-                if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
-                    player.x -= PLAYER_SPEED;
-                else if (key[ALLEGRO_KEY_RIGHT] && player.x <= (TOTAL_WIDTH - player.w))
-                    player.x += PLAYER_SPEED;
-                else if (key[ALLEGRO_KEY_SPACE])
-                    create_player_shot(&player);
 
                 if (checkAllEnemiesDefeated(enemies))
                 {

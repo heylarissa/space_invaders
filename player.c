@@ -28,7 +28,15 @@ void destroy_player(PLAYER *player)
     player->shots = NULL;
     free(aux);
 }
-
+void move_player(unsigned char key[], PLAYER *player)
+{
+    if (key[ALLEGRO_KEY_LEFT] && (player->x >= 0))
+        player->x -= PLAYER_SPEED;
+    else if (key[ALLEGRO_KEY_RIGHT] && player->x <= (TOTAL_WIDTH - player->w))
+        player->x += PLAYER_SPEED;
+    else if (key[ALLEGRO_KEY_SPACE])
+        create_player_shot(player);
+}
 void draw_player(SPRITES *sprites, PLAYER player)
 {
 

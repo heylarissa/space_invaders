@@ -34,5 +34,6 @@ typedef struct player
 void init_player(PLAYER *player, SPRITES *sprites);
 void draw_player(SPRITES *sprites, PLAYER player);
 void destroy_player(PLAYER *player);
+void move_player(unsigned char key[], PLAYER *player);
 
 #endif
