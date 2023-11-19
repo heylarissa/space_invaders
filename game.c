@@ -50,25 +50,24 @@ void draw_game(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites, ALLEGRO_FONT
     draw_player(sprites, *player);
 }
 
-
 /* Determina a dificuldade do jogo conforme o nível*/
 void set_level(int *dificulty, int *shot_dificulty, int currentRound)
 {
 
     if (currentRound == 2)
     {
-        dificulty = 15;
-        shot_dificulty = 4;
+        *dificulty = 15;
+        *shot_dificulty = 4;
     }
     if (currentRound == 3)
     {
-        dificulty = 10;
-        shot_dificulty = 3;
+        *dificulty = 10;
+        *shot_dificulty = 3;
     }
     else if (currentRound == 4)
     {
-        dificulty = 5;
-        shot_dificulty = 1;
+        *dificulty = 5;
+        *shot_dificulty = 1;
     }
 }
 
@@ -82,7 +81,7 @@ void game_logic(unsigned char key[], PLAYER *player, GameState *gameState,
     int dificulty = 25;
     int shot_dificulty = 5;
 
-    set_level(dificulty, shot_dificulty, currentRound);
+    set_level(&dificulty, &shot_dificulty, currentRound);
 
     if (player->lives == 0)
         *gameState = GAME_OVER;
