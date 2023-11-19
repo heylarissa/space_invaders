@@ -206,7 +206,7 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE
     while (aux != NULL)
     {
         i++;
-        aux->y -= SIZE_PLAYER / 2;
+        aux->y -= PLAYER_SHOT_SPEED;
 
         if ((aux->y <= 0) || kill_enemy(enemies, aux, p) || obstacle_collision(obstacles, *aux, 0))
             delete_shot(i, &p->shots);

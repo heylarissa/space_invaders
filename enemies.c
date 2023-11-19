@@ -81,6 +81,21 @@ void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
     }
 }
 
+/* Libera memória */
+void destroy_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
+{
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+            SHOT *aux;
+            aux = enemies[i][j].shots;
+            enemies[i][j].shots = NULL;
+            free(aux);
+        }
+    }
+}
+
 /* Desenha tiros inimigos */
 void draw_enemies_shots(SHOT *shot)
 {

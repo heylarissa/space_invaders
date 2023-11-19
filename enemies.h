@@ -48,4 +48,5 @@ int get_enemy_type(int line);
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 void move_red_spaceship(ENEMY *spaceship);
 bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE]);
+void destroy_enemies (ENEMY (*enemies)[ENEMIES_PER_LINE]);
 #endif

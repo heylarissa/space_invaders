@@ -30,6 +30,29 @@ void init_sprites(SPRITES *sprites)
     sprites->obstacles[4] = select_sprite(sprites->_sheet, 372, 210, 45, 35); // dano 8
 }
 
+void destroy_sprites(SPRITES *sprites)
+{
+    al_destroy_bitmap(sprites->_sheet);
+    al_destroy_bitmap(sprites->spaceinvaderslogo);
+    al_destroy_bitmap(sprites->spaceship);
+
+    al_destroy_bitmap(sprites->aliens_t1[0]);
+    al_destroy_bitmap(sprites->aliens_t2[0]);
+    al_destroy_bitmap(sprites->aliens_t3[0]);
+
+    al_destroy_bitmap(sprites->aliens_t1[1]);
+    al_destroy_bitmap(sprites->aliens_t2[1]);
+    al_destroy_bitmap(sprites->aliens_t3[1]);
+
+    al_destroy_bitmap(sprites->obstacles[0]);
+    al_destroy_bitmap(sprites->obstacles[1]);
+    al_destroy_bitmap(sprites->obstacles[2]);
+    al_destroy_bitmap(sprites->obstacles[3]);
+    al_destroy_bitmap(sprites->obstacles[4]);
+
+    free(sprites);
+}
+
 // Seleciona a parte da imagem a ser cortada
 ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h)
 {
@@ -50,4 +73,3 @@ void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
         scale_image(live, pos_x, pos_y, 0.5);
     }
 }
-

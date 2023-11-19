@@ -69,11 +69,11 @@ int main()
     ALLEGRO_EVENT event;
     SPRITES *sprites = (SPRITES *)malloc(sizeof(SPRITES));
     PLAYER player;
-    ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
+    ENEMY spaceship;
     ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE];
     OBSTACLE obstacles[NUM_OBSTACLES];
 
-    init_game(&player, enemies, spaceship, sprites, obstacles);
+    init_game(&player, enemies, &spaceship, sprites, obstacles);
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -107,7 +107,7 @@ int main()
 
                 /* enemy logic */
                 if (frame_count % 30 == 0)
-                    update_enemies(enemies, spaceship);
+                    update_enemies(enemies, &spaceship);
                 else if (frame_count % 5 == 0)
                     update_enemies_shots(enemies, &player, obstacles);
 
@@ -121,8 +121,9 @@ int main()
 
                 if (checkAllEnemiesDefeated(enemies))
                 {
-                    player.lives++;
-                    start_new_round(enemies, spaceship, sprites, &player, obstacles);
+                    if (player.lives < 5)
+                        player.lives++;
+                    start_new_round(enemies, &spaceship, sprites, &player, obstacles);
                     currentRound++;
                 }
             }
@@ -179,7 +180,7 @@ int main()
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
                                       al_get_bitmap_width(sprites->spaceship),
                                       al_get_bitmap_height(sprites->spaceship),
-                                      spaceship->x, spaceship->y,
+                                      spaceship.x, spaceship.y,
                                       al_get_bitmap_width(sprites->spaceship) * 0.5,
                                       al_get_bitmap_height(sprites->spaceship) * 0.5, 0); // desenha nave vermelha
 
@@ -196,19 +197,13 @@ int main()
         }
     }
 
-    al_destroy_bitmap(sprites->_sheet);
-    al_destroy_bitmap(sprites->spaceinvaderslogo);
-    al_destroy_bitmap(sprites->spaceship);
-    // TODO: Liberar todos os sprites
-    // Liberar todos os tiros
-
-    free(sprites);
-    free(spaceship);
-
+    destroy_sprites(sprites);
+    destroy_enemies(enemies);
+    destroy_player(&player);
     al_destroy_font(font);
-    al_destroy_display(disp);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
+    al_destroy_display(disp);
 
     return 0;
 }

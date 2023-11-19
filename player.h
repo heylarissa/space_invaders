@@ -9,6 +9,7 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
 
+#define PLAYER_SHOT_SPEED 10
 typedef struct player
 {
     float x, y;
@@ -24,5 +25,6 @@ typedef struct player
 
 void init_player(PLAYER *player, SPRITES *sprites);
 void draw_player(SPRITES *sprites, PLAYER player);
+void destroy_player(PLAYER *player);
 
 #endif

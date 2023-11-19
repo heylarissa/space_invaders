@@ -19,6 +19,14 @@ void init_player(PLAYER *player, SPRITES *sprites)
     player->h = al_get_bitmap_height(sprites->player);
 }
 
+void destroy_player(PLAYER *player)
+{
+    SHOT *aux;
+    aux = player->shots;
+    player->shots = NULL;
+    free(aux);
+}
+
 void draw_player(SPRITES *sprites, PLAYER player)
 {
     al_draw_bitmap(sprites->player, player.x, player.y, 0);
