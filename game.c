@@ -14,6 +14,12 @@ void init_sprites(SPRITES *sprites)
     sprites->spaceship = select_sprite(sprites->_sheet, 365, 770, 220, 100);
     sprites->player = select_sprite(sprites->_sheet, 350, 1160, 110, 68);
 
+    sprites->explosion_player = select_sprite(sprites->_sheet, 364, 275, (400-364), (290-275));
+    sprites->explosion_enemy = select_sprite(sprites->_sheet, 436, 275, (464-436), (290-292));
+
+    sprites->shot_intermed = select_sprite(sprites->_sheet, 410, 276, (420-410), (289-276));
+    sprites->shot_strong = select_sprite(sprites->_sheet, 379, 1903, (394-379), (1928-1903));
+
     sprites->aliens_t1[0] = select_sprite(sprites->_sheet, 146, 225, 25, 17); // v1
     sprites->aliens_t1[1] = select_sprite(sprites->_sheet, 180, 225, 25, 17); // v2
 

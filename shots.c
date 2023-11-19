@@ -111,7 +111,7 @@ bool enemy_can_shoot(ENEMY enemy, PLAYER player, ENEMY (*enemies)[ENEMIES_PER_LI
     else if (enemy.type == intermed)
     {
         // não atiram caso exista um projétil na coluna
-        can_shoot = shot_in_this_column(enemy.shots, enemy.x);
+        can_shoot = !shot_in_this_column(enemy.shots, enemy.x);
     }
     else if (enemy.type == strong)
     {
