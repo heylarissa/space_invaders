@@ -47,7 +47,7 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
 int get_enemy_type(int line);
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 void move_red_spaceship(ENEMY *spaceship);
-bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE]);
-void destroy_enemies (ENEMY (*enemies)[ENEMIES_PER_LINE]);
+bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship);
+void destroy_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE]);
 void draw_red_spaceship(SPRITES *sprites, ENEMY spaceship);
 #endif

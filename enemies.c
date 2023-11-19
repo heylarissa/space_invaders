@@ -7,8 +7,10 @@
 #include <time.h>
 
 /* Retorna falso se algum inimigo estiver vivo */
-bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE])
+bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship)
 {
+    if (spaceship->state != DEAD_ENEMY)
+        return false;
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
@@ -206,7 +208,8 @@ void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
         {
-            if (enemies[i][j].state == EXPLODE_ENEMY) {
+            if (enemies[i][j].state == EXPLODE_ENEMY)
+            {
                 enemies[i][j].state = DEAD_ENEMY;
             }
             if (enemies[i][j].state != DEAD_ENEMY && enemies[i][j].state != EXPLODE_ENEMY)
@@ -259,7 +262,7 @@ void move_red_spaceship(ENEMY *spaceship)
 /* Atualiza posição de inimigos e seus tiros */
 void update_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship)
 {
-    
+
     move_red_spaceship(spaceship);
     move_enemies(enemies);
 }
