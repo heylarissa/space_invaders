@@ -18,7 +18,7 @@ Devem existir três tipos de inimigos: - OK
 - A nave pode se mover a direita e à esquerda, até as bordas do mapa - OK
 - A nave pode atirar caso não exista um projétil seu na coluna - OK
 - O projétil da nave causa um de dano em obstáculos
-- A nave inicia com três vidas, sendo que uma vida é removida cada vez que a mesma é acertada; 
+- A nave inicia com três vidas, sendo que uma vida é removida cada vez que a mesma é acertada; - OK
     e uma vida adicionada a cada fim de rodada (ao máximo de cinco vidas). - OK
 
 #### Obstáculos
@@ -31,10 +31,10 @@ Devem existir três tipos de inimigos: - OK
 - Uma vez que todos os inimigos forem mortos, uma nova rodada deve ser iniciada, carregando novos inimigos. - OK
 
 #### ETC
-- Deve existir um contador de pontos entre todas as rodadas (não reiniciado)
-    - Um inimigo fraco morto atribui dez (10) pontos ao jogador;
-    - Um inimigo intermediário morto garante vinte (20) pontos ao jogador;
-    - Um inimigo forte morto garante quarenta (40) pontos ao jogador;
+- Deve existir um contador de pontos entre todas as rodadas (não reiniciado) - OK
+    - Um inimigo fraco morto atribui dez (10) pontos ao jogador; - OK
+    - Um inimigo intermediário morto garante vinte (20) pontos ao jogador; - OK
+    - Um inimigo forte morto garante quarenta (40) pontos ao jogador; - OK
 
 ## Requisitos relacionados à interface que devem ser implementados
 
@@ -51,7 +51,7 @@ Devem existir três tipos de inimigos: - OK
 - Deve existir uma animação de explosão do inimigo e da nave, quando estes forem derrotados.
 
 #### Tela
-- O placar e a quantidade de vidas do jogador devem estar explícitos na tela
+- O placar e a quantidade de vidas do jogador devem estar explícitos na tela - OK
 - Todas as funcionalidades descritas devem estar acessíveis e/ou visualizáveis através da interface gráfica - OK
 
 ## Lista de funcionalidades adicionais e opcionais

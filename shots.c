@@ -42,7 +42,6 @@ bool shot_in_this_column(SHOT *shots, PLAYER p)
     return FALSE;
 }
 
-/* SHOTS */
 void delete_shot(int position, SHOT **head)
 {
     SHOT *temp = *head;
@@ -105,8 +104,6 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
             if (enemies[i][j].shots != NULL)
             {
                 enemies[i][j].shots->y += enemies[i][j].height;
-                // Adicione mensagens de depuração aqui
-                // printf("Enemy Shot[%d][%d]: y=%f\n", i, j, enemies[i][j].shots->y);
 
                 if (player_collision(*player, enemies[i][j]))
                 {
@@ -137,7 +134,7 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
     }
 }
 
-int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot)
+int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot, PLAYER *player)
 {
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
@@ -151,6 +148,18 @@ int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot)
                 (shot->y <= (enemies[i][j].y + enemies[i][j].height)))
             {
                 enemies[i][j].state = DEAD_ENEMY;
+                if (enemies[i][j].type == weak)
+                {
+                    player->score += 10;
+                }
+                else if (enemies[i][j].type == intermed)
+                {
+                    player->score += 20;
+                }
+                else if (enemies[i][j].type == strong)
+                {
+                    player->score += 40;
+                }
                 return TRUE;
             }
         }
@@ -196,7 +205,7 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE])
         i++;
         aux->y -= SIZE_PLAYER / 2;
 
-        if ((aux->y <= 0) | kill_enemy(enemies, aux))
+        if ((aux->y <= 0) | kill_enemy(enemies, aux, p))
         {
             delete_shot(i, &p->shots);
         }
