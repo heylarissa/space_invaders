@@ -22,6 +22,25 @@ void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaces
     init_enemies(sprites, enemies);
 }
 
+void startNewRound(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player)
+{
+    init_game(player, enemies, spaceship, sprites);
+}
+bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE])
+{
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+            if (enemies[i][j].state != DEAD_ENEMY)
+            {
+                return false; // Se algum inimigo ainda estiver vivo, retorna falso
+            }
+        }
+    }
+    return true; // Todos os inimigos estão mortos
+}
+
 int main()
 {
     // TODO: Refatorar toda a inicialização do allegro para uma única struct
@@ -67,14 +86,13 @@ int main()
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
-    ALLEGRO_TIMER *enemies_timer = al_create_timer(1.0 / 20.0);
-    al_register_event_source(queue, al_get_timer_event_source(enemies_timer));
     int frame_count = 0;
 
-    al_start_timer(enemies_timer);
     al_start_timer(timer);
+    int currentRound = 1;
+    bool gameover = FALSE;
 
-    while (1)
+    while (!done)
     {
         al_wait_for_event(queue, &event);
 
@@ -85,13 +103,15 @@ int main()
                 done = true;
 
             if ((menu == TRUE) && ((key[ALLEGRO_KEY_SPACE]) || (key[ALLEGRO_KEY_ENTER])))
-            {
                 menu = FALSE;
-            }
             else
             {
                 frame_count++;
 
+                if (player.lives == 0)
+                {
+                    gameover = TRUE;
+                }
                 /* player logic */
                 update_player_shots(&player, enemies);
 
@@ -99,7 +119,7 @@ int main()
                 if (frame_count % 30 == 0)
                     update_enemies(enemies, spaceship);
                 else if (frame_count % 5 == 0)
-                    update_enemies_shots(enemies);
+                    update_enemies_shots(enemies, &player);
 
                 /* interação com teclado */
                 if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
@@ -108,6 +128,13 @@ int main()
                     player.x += SIZE_PLAYER / 2;
                 else if (key[ALLEGRO_KEY_SPACE])
                     create_player_shot(&player);
+
+                if (checkAllEnemiesDefeated(enemies))
+                {
+                    player.lives++;
+                    startNewRound(enemies, spaceship, sprites, &player);
+                    currentRound++;
+                }
             }
 
             for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
@@ -142,11 +169,18 @@ int main()
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
                 al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
             }
+            else if (gameover)
+            {
+                al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+                al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
+            }
             else
             {
+
                 // desenha tela
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score); // score do player
-                draw_lives(player.lives, sprites->player, font);               // vidas do player
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);   // score do player
+                draw_lives(player.lives, sprites->player, font);                 // vidas do player
+                al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound); // score do player
 
                 // desenha inimigos
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
@@ -178,6 +212,7 @@ int main()
     al_destroy_bitmap(sprites->spaceinvaderslogo);
     al_destroy_bitmap(sprites->spaceship);
     // TODO: Liberar todos os sprites
+    // Liberar todos os tiros
 
     free(sprites);
     free(spaceship);

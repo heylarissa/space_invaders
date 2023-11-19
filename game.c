@@ -2,6 +2,7 @@
 #include "display.h"
 #include "player.h"
 #include "enemies.h"
+#include "utils.h"
 
 void init_sprites(SPRITES *sprites)
 {
@@ -32,12 +33,13 @@ ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h)
 
 void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
 {
-    int pos_x = 500;
-    int pos_y = 0;
-    al_draw_text(font, WHITE, 300, 0, 0, "LIVES ");
+    int pos_x =  TOTAL_WIDTH - 350;
+    int pos_y = 5;
+    al_draw_text(font, WHITE, TOTAL_WIDTH - 400, 0, 0, "LIVES ");
     for (int i = 0; i < lives; i++)
     {
-        pos_x = pos_x + al_get_bitmap_width(live);
-        al_draw_bitmap(live, pos_x, pos_y, 0);
+        pos_x = pos_x + al_get_bitmap_width(live)*0.5;
+        // al_draw_bitmap(live, pos_x, pos_y, 0);
+        scale_image(live, pos_x, pos_y, 0.5);
     }
 }

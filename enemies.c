@@ -65,18 +65,16 @@ void init_enemies(SPRITES *sprites, ENEMY (*enemies)[ENEMIES_PER_LINE])
     }
 }
 
+/* Desenha tiros inimigos */
 void draw_enemies_shots(SHOT *shot)
 {
     if (shot != NULL)
         al_draw_filled_rectangle(shot->x, shot->y, shot->x - 5, shot->y - 20, WHITE);
 }
 
+/* Desenha inimigos */
 void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *sprites)
 {
-
-    ALLEGRO_FONT *font = al_load_font("./assets/VT323-Regular.ttf", 48, 0);
-    must_init(font, "font");
-
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
@@ -179,14 +177,6 @@ void move_red_spaceship(ENEMY *spaceship)
     {
         spaceship->direction = !spaceship->direction;
     }
-}
-
-int valid_shots(ENEMY *chosen[])
-{
-    if (chosen[0] != chosen[1] && chosen[0] != NULL && chosen[1] != NULL)
-        return TRUE;
-
-    return FALSE;
 }
 
 /* Atualiza posição de inimigos e seus tiros */

@@ -23,6 +23,5 @@ typedef struct player
 #define SIZE_PLAYER 50
 
 void init_player(PLAYER *player, SPRITES *sprites);
-void create_player_shot(PLAYER *p);
 
 #endif

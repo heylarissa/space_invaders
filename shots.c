@@ -56,9 +56,7 @@ void delete_shot(int position, SHOT **head)
     else
     {
         for (int i = 0; i < position - 1; i++)
-        {
             temp = temp->next;
-        }
 
         SHOT *del = temp->next;
         temp->next = temp->next->next;
@@ -66,8 +64,37 @@ void delete_shot(int position, SHOT **head)
         free(del);
     }
 }
+
+/* Tiro colidiu com player */
+bool player_collision(PLAYER player, ENEMY enemy)
+{
+
+    if (enemy.shots != NULL)
+    {
+        if ((enemy.shots->x <= (player.x + player.w)) &&
+            (enemy.shots->x >= player.x) &&
+            (enemy.shots->y <= (player.y + player.h)) &&
+            (enemy.shots->y >= player.y))
+            return TRUE; // colisão detectada
+    }
+
+    return FALSE; // sem colisão
+}
+
+void delete_enemy_shot(SHOT *head)
+{
+    SHOT *shot;
+    shot = head;
+    if (head == NULL || shot == NULL)
+        return;
+
+    head = head->next;
+    free(shot);
+    return;
+}
+
 /* Atualiza posição dos tiros inimigos */
-void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE])
+void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
 {
     int shooting_count = 0;
 
@@ -78,9 +105,14 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE])
             if (enemies[i][j].shots != NULL)
             {
                 enemies[i][j].shots->y += enemies[i][j].height;
+                // Adicione mensagens de depuração aqui
+                // printf("Enemy Shot[%d][%d]: y=%f\n", i, j, enemies[i][j].shots->y);
 
-                // TODO: verificar colisão aqui
-
+                if (player_collision(*player, enemies[i][j]))
+                {
+                    player->lives--;
+                    delete_enemy_shot(enemies[i][j].shots);
+                }
                 if (enemies[i][j].shots->y >= TOTAL_HEIGHT) // exclui o tiro
                 {
                     enemies[i][j].shots = NULL;
@@ -126,6 +158,7 @@ int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot)
 
     return FALSE;
 }
+
 /* Retorna TRUE se houver 2 tiros ativos*/
 int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
 {
