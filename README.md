@@ -7,7 +7,7 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace
 ## Requisitos
 
 #### Inimigos
-Devem existir três tipos de inimigos: - OK  
+- [x] Devem existir três tipos de inimigos: - OK  
     - Fracos, não atiram caso exista uma entidade à sua frente ou se já existir um projétil na coluna, causam um (1) de dano em obstáculos;  
     - Intermediários, não atiram caso exista um projétil na coluna, causam dois (2) de dano em obstáculos;  
     - Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois (2) de dano em obstáculos.  
