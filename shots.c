@@ -26,14 +26,14 @@ void draw_player_shots(SHOT *shots)
     }
 }
 
-bool shot_in_this_column(SHOT *shots, PLAYER p)
+bool shot_in_this_column(SHOT *shots, int posicao_entidade)
 {
     SHOT *aux;
     aux = shots;
 
     while (aux != NULL)
     {
-        if (aux->x == p.x + SIZE_PLAYER + 5)
+        if (aux->x == posicao_entidade + SIZE_PLAYER + 5)
         {
             return TRUE;
         }
@@ -81,6 +81,47 @@ bool player_collision(PLAYER player, ENEMY enemy)
     return FALSE; // sem colisão
 }
 
+bool entity_in_front(ENEMY enemy, ENEMY (*enemies)[ENEMIES_PER_LINE])
+{
+    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
+    {
+        for (int j = 0; j < ENEMIES_PER_LINE; j++)
+        {
+            if ((enemies[i][j].x == enemy.x && enemies[i][j].y > enemy.y)) // Entidade a frente
+            {
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+/* Retorna nimigo pode atirar */
+bool enemy_can_shoot(ENEMY enemy, PLAYER player, ENEMY (*enemies)[ENEMIES_PER_LINE])
+{
+    if (enemy.state == DEAD_ENEMY || enemy.shots != NULL)
+        return FALSE; // inimigo MORTO ou com tiros ativos
+    bool can_shoot = FALSE;
+    if (enemy.type == weak)
+    {
+        // não atiram caso exista uma entidade à sua frente ou se já existir um projétil na coluna
+        can_shoot = (!entity_in_front(enemy, enemies) && !shot_in_this_column(enemy.shots, enemy.x));
+    }
+    else if (enemy.type == intermed)
+    {
+        // não atiram caso exista um projétil na coluna
+        can_shoot = !shot_in_this_column(enemy.shots, enemy.x);
+    }
+    else if (enemy.type == strong)
+    {
+        // podem atirar mesmo se existir até um projétil na coluna
+        can_shoot = TRUE;
+    }
+
+    return can_shoot;
+}
+
 /* Atualiza posição dos tiros inimigos */
 void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
 {
@@ -92,6 +133,7 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
         {
             if (enemies[i][j].shots != NULL)
             {
+                enemies[i][j].shots->state = !enemies[i][j].shots->state;
                 enemies[i][j].shots->y += ENEMY_SHOT_SPEED;
                 bool delete_shot = FALSE;
 
@@ -125,12 +167,13 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
         int random_line = rand() % NUM_ENEMIES_LINES;
         int random_column = rand() % ENEMIES_PER_LINE;
 
-        if (enemies[random_line][random_column].shots == NULL) // sem tiros ativos
+        if (enemy_can_shoot(enemies[random_line][random_column], *player, enemies))
         {
             enemies[random_line][random_column].shots = malloc(sizeof(SHOT));
             enemies[random_line][random_column].shots->x = (enemies[random_line][random_column].x + enemies[random_line][random_column].width * ENEMY_RESIZE / 2);
             enemies[random_line][random_column].shots->y = (enemies[random_line][random_column].y + enemies[random_line][random_column].height * ENEMY_RESIZE);
             enemies[random_line][random_column].shots->direction = DOWN;
+            enemies[random_line][random_column].shots->state = SHOT_STATE_ONE;
             shooting_count++;
         }
     }
@@ -218,7 +261,7 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE
 
 void create_player_shot(PLAYER *p)
 {
-    if (!shot_in_this_column(p->shots, *p))
+    if (!shot_in_this_column(p->shots, p->x))
     {
         SHOT *new;
         new = malloc(sizeof(SHOT));

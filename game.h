@@ -26,10 +26,15 @@ typedef struct SPRITES_T
     ALLEGRO_BITMAP *aliens_t3[2]; // Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois (2) de dano em obstáculos.
 
     ALLEGRO_BITMAP *player;
-    ALLEGRO_BITMAP *shield[5];
     ALLEGRO_BITMAP *spaceinvaderslogo;
-    ALLEGRO_BITMAP *explosion;
-    ALLEGRO_BITMAP *shot;
+
+    ALLEGRO_BITMAP *explosion_player;
+    ALLEGRO_BITMAP *explosion_enemy;
+
+    ALLEGRO_BITMAP *shot_weak;
+    ALLEGRO_BITMAP *shot_intermed;
+    ALLEGRO_BITMAP *shot_strong;
+
     ALLEGRO_BITMAP *obstacles[5];
 
 } SPRITES;
@@ -37,11 +42,13 @@ typedef struct SPRITES_T
 typedef struct shot
 {
     int direction;
+    int state;
     float x, y;
     struct shot *next;
 } SHOT;
 
-typedef enum {
+typedef enum
+{
     MENU,
     GAME,
     GAME_OVER,

@@ -97,10 +97,37 @@ void destroy_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 }
 
 /* Desenha tiros inimigos */
-void draw_enemies_shots(SHOT *shot)
+void draw_enemies_shots(ENEMY enemy, SPRITES *sprites)
 {
-    if (shot != NULL)
-        al_draw_filled_rectangle(shot->x, shot->y, shot->x - 5, shot->y - 20, WHITE);
+    if (enemy.shots != NULL)
+    {
+        if (enemy.type == weak)
+        {
+            if (enemy.shots->state == SHOT_STATE_ONE)
+                al_draw_filled_rectangle(enemy.shots->x, enemy.shots->y, enemy.shots->x + 5, enemy.shots->y + 20, WHITE);
+            else if (enemy.shots->state == SHOT_STATE_TWO)
+                al_draw_filled_rectangle(enemy.shots->x, enemy.shots->y, enemy.shots->x + 5, enemy.shots->y + 20, GREEN);
+        }
+        else if (enemy.type == intermed)
+        {
+            if (enemy.shots->state == SHOT_STATE_ONE)
+                scale_image(sprites->shot_intermed, enemy.shots->x, enemy.shots->y, 2);
+            else if (enemy.shots->state == SHOT_STATE_TWO)
+                al_draw_scaled_bitmap(sprites->shot_intermed, 0, 0,
+                                      al_get_bitmap_width(sprites->shot_intermed),
+                                      al_get_bitmap_height(sprites->shot_intermed),
+                                      enemy.shots->x, enemy.shots->y,
+                                      al_get_bitmap_width(sprites->shot_intermed) * 2,
+                                      -al_get_bitmap_height(sprites->shot_intermed) * 2, 0);
+        }
+        else if (enemy.type == strong)
+        {
+            if (enemy.shots->state == SHOT_STATE_ONE)
+                scale_image(sprites->shot_strong, enemy.shots->x, enemy.shots->y, 1);
+            else if (enemy.shots->state == SHOT_STATE_TWO)
+                al_draw_bitmap(sprites->shot_strong, enemy.shots->x, enemy.shots->y, ALLEGRO_FLIP_HORIZONTAL);
+        }
+    }
 }
 
 /* Desenha inimigos */
@@ -112,7 +139,7 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
         {
             if (enemies[i][j].state != DEAD_ENEMY)
             {
-                draw_enemies_shots(enemies[i][j].shots);
+                draw_enemies_shots(enemies[i][j], sprites);
 
                 if (enemies[i][j].type == weak)
                 {

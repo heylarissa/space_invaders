@@ -7,5 +7,5 @@ void scale_image(ALLEGRO_BITMAP *image, float x, float y, float resize)
                           al_get_bitmap_height(image),
                           x, y,
                           al_get_bitmap_width(image) * resize,
-                          al_get_bitmap_height(image) * resize, 0); // desenha nave vermelha
+                          al_get_bitmap_height(image) * resize, 0); 
 }
