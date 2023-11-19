@@ -9,12 +9,14 @@
 #include "enemies.h"
 
 #define OBSTACLE_SPACING 290
-
+#define DEAD_OBSTACLE 2
+#define OBSTACLE_RESIZE 3
 typedef struct obstacle
 {
     float x, y; // posição
     int w, h;   // tamanho;
     int life;   // vidas
+    int state;
 } OBSTACLE;
 
 void init_obstacles(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites);
