@@ -11,6 +11,7 @@
 #include "game.h"
 #include "enemies.h"
 #include "shots.h"
+#include "obstacles.h"
 
 void draw_player_shots(SHOT *shots)
 {
@@ -80,20 +81,8 @@ bool player_collision(PLAYER player, ENEMY enemy)
     return FALSE; // sem colisão
 }
 
-void delete_enemy_shot(SHOT *head)
-{
-    SHOT *shot;
-    shot = head;
-    if (head == NULL || shot == NULL)
-        return;
-
-    head = head->next;
-    free(shot);
-    return;
-}
-
 /* Atualiza posição dos tiros inimigos */
-void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
+void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
 {
     int shooting_count = 0;
 
@@ -103,16 +92,29 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
         {
             if (enemies[i][j].shots != NULL)
             {
-                enemies[i][j].shots->y += enemies[i][j].height;
+                enemies[i][j].shots->y += ENEMY_SHOT_SPEED;
+                bool delete_shot = FALSE;
 
-                if (player_collision(*player, enemies[i][j]))
-                {
-                    player->lives--;
-                    delete_enemy_shot(enemies[i][j].shots);
-                }
                 if (enemies[i][j].shots->y >= TOTAL_HEIGHT) // exclui o tiro
                 {
+                    delete_shot = TRUE;
+                }
+                else if (player_collision(*player, enemies[i][j]))
+                {
+                    player->lives--;
+                    delete_shot = TRUE;
+                }
+                else if (obstacle_collision(obstacles, *enemies[i][j].shots, enemies[i][j].type))
+                {
+                    delete_shot = TRUE;
+                }
+
+                if (delete_shot)
+                {
+                    SHOT *aux;
+                    aux = enemies[i][j].shots;
                     enemies[i][j].shots = NULL;
+                    free(aux);
                 }
             }
         }
@@ -126,8 +128,8 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player)
         if (enemies[random_line][random_column].shots == NULL) // sem tiros ativos
         {
             enemies[random_line][random_column].shots = malloc(sizeof(SHOT));
-            enemies[random_line][random_column].shots->x = enemies[random_line][random_column].x;
-            enemies[random_line][random_column].shots->y = enemies[random_line][random_column].y;
+            enemies[random_line][random_column].shots->x = (enemies[random_line][random_column].x + enemies[random_line][random_column].width * ENEMY_RESIZE / 2);
+            enemies[random_line][random_column].shots->y = (enemies[random_line][random_column].y + enemies[random_line][random_column].height * ENEMY_RESIZE);
             enemies[random_line][random_column].shots->direction = DOWN;
             shooting_count++;
         }
@@ -143,9 +145,9 @@ int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot, P
 
             if ((enemies[i][j].state != DEAD_ENEMY) &&
                 (shot->x >= enemies[i][j].x) &&
-                (shot->x <= (enemies[i][j].x + enemies[i][j].width)) &&
+                (shot->x <= (enemies[i][j].x + enemies[i][j].width * ENEMY_RESIZE)) &&
                 (shot->y >= enemies[i][j].y) &&
-                (shot->y <= (enemies[i][j].y + enemies[i][j].height)))
+                (shot->y <= (enemies[i][j].y + enemies[i][j].height * ENEMY_RESIZE)))
             {
                 enemies[i][j].state = DEAD_ENEMY;
                 if (enemies[i][j].type == weak)
@@ -193,10 +195,11 @@ int enemy_active_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], int *active_shots)
     return FALSE;
 }
 
-void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE])
+void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES])
 {
     if (p->shots == NULL)
         return; // se não houver tiros, ignorar
+
     SHOT *aux;
     int i = -1;
     aux = p->shots;
@@ -205,12 +208,12 @@ void update_player_shots(PLAYER *p, ENEMY (*enemies)[ENEMIES_PER_LINE])
         i++;
         aux->y -= SIZE_PLAYER / 2;
 
-        if ((aux->y <= 0) | kill_enemy(enemies, aux, p))
-        {
+        if ((aux->y <= 0) || kill_enemy(enemies, aux, p) || obstacle_collision(obstacles, *aux, 0))
             delete_shot(i, &p->shots);
-        }
+
         aux = aux->next;
     }
+    return;
 }
 
 void create_player_shot(PLAYER *p)

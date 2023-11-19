@@ -17,15 +17,15 @@ Devem existir três tipos de inimigos: - OK
 #### Nave
 - A nave pode se mover a direita e à esquerda, até as bordas do mapa - OK
 - A nave pode atirar caso não exista um projétil seu na coluna - OK
-- O projétil da nave causa um de dano em obstáculos
+- O projétil da nave causa um (1) de dano em obstáculos
 - A nave inicia com três vidas, sendo que uma vida é removida cada vez que a mesma é acertada; - OK
     e uma vida adicionada a cada fim de rodada (ao máximo de cinco vidas). - OK
 
 #### Obstáculos
-- Obstáculos podem ser colocados entre a nave e os inimigos
+- Obstáculos podem ser colocados entre a nave e os inimigos - OK
     - Após receber dez (10) de dano, o obstáculo é removido
-    - Você pode definir o número de obstáculos a partir do tamanho do tabuleiro (seu critério)
-    - Os obstáculos não são reiniciados no início das rodadas;
+    - Você pode definir o número de obstáculos a partir do tamanho do tabuleiro (seu critério) - OK
+    - Os obstáculos não são reiniciados no início das rodadas; - OK
 
 #### Rodadas
 - Uma vez que todos os inimigos forem mortos, uma nova rodada deve ser iniciada, carregando novos inimigos. - OK

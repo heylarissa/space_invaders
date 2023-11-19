@@ -12,33 +12,23 @@
 #include "game.h"
 #include "player.h"
 #include "enemies.h"
+#include "obstacles.h"
 
-void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites)
+void start_new_round(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
+{
+    init_spaceship(spaceship, sprites);
+    init_enemies(sprites, enemies);
+    init_obstacles(obstacles, sprites);
+}
+
+void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, OBSTACLE obstacles[NUM_OBSTACLES])
 {
     srand((unsigned int)time(NULL));
     init_sprites(sprites);
     init_player(player, sprites);
     init_spaceship(spaceship, sprites);
     init_enemies(sprites, enemies);
-}
-
-void startNewRound(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player)
-{
-    init_game(player, enemies, spaceship, sprites);
-}
-bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE])
-{
-    for (int i = 0; i < NUM_ENEMIES_LINES; i++)
-    {
-        for (int j = 0; j < ENEMIES_PER_LINE; j++)
-        {
-            if (enemies[i][j].state != DEAD_ENEMY)
-            {
-                return false; // Se algum inimigo ainda estiver vivo, retorna falso
-            }
-        }
-    }
-    return true; // Todos os inimigos estão mortos
+    init_obstacles(obstacles, sprites);
 }
 
 int main()
@@ -81,8 +71,9 @@ int main()
     PLAYER player;
     ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
     ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE];
+    OBSTACLE obstacles[NUM_OBSTACLES];
 
-    init_game(&player, enemies, spaceship, sprites);
+    init_game(&player, enemies, spaceship, sprites, obstacles);
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -104,22 +95,21 @@ int main()
 
             if ((menu == TRUE) && ((key[ALLEGRO_KEY_SPACE]) || (key[ALLEGRO_KEY_ENTER])))
                 menu = FALSE;
-            else
+            else if (!gameover)
             {
                 frame_count++;
 
                 if (player.lives == 0)
-                {
                     gameover = TRUE;
-                }
+
                 /* player logic */
-                update_player_shots(&player, enemies);
+                update_player_shots(&player, enemies, obstacles);
 
                 /* enemy logic */
                 if (frame_count % 30 == 0)
                     update_enemies(enemies, spaceship);
                 else if (frame_count % 5 == 0)
-                    update_enemies_shots(enemies, &player);
+                    update_enemies_shots(enemies, &player, obstacles);
 
                 /* interação com teclado */
                 if (key[ALLEGRO_KEY_LEFT] && (player.x >= 0))
@@ -132,7 +122,7 @@ int main()
                 if (checkAllEnemiesDefeated(enemies))
                 {
                     player.lives++;
-                    startNewRound(enemies, spaceship, sprites, &player);
+                    start_new_round(enemies, spaceship, sprites, &player, obstacles);
                     currentRound++;
                 }
             }
@@ -173,9 +163,12 @@ int main()
             {
                 al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
                 al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
+                al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS ESC OR CLOSE THE WINDOW");
             }
             else
             {
+                /* desenha obstáculos */
+                draw_obstacles(obstacles, sprites);
 
                 // desenha tela
                 al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);   // score do player
@@ -193,14 +186,9 @@ int main()
                 draw_enemies(enemies, sprites);
 
                 // desenha player
-                al_draw_bitmap(sprites->player, player.x, player.y, 0);
-                draw_player_shots(player.shots);
+                draw_player(sprites, player);
 
-                // desenha tiros dos inimigos
-                // se tiro atingiu player, imprime outra animação do player
-                // se tiro atingiu inimigo, imprime inimigo explodindo
-                // pros obstáculos usar uma imagem e só plotar o pixel quando o tiro atingir
-                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5);
+                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
             }
             al_flip_display();
 
