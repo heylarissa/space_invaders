@@ -5,6 +5,9 @@
 #define OBSTACLE_LIFE 10
 
 #include "game.h"
+#include "display.h"
+
+#define OBSTACLE_SPACING 290
 
 typedef struct obstacle
 {
