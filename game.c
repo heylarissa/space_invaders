@@ -3,6 +3,7 @@
 #include "player.h"
 #include "enemies.h"
 #include "utils.h"
+#include "obstacles.h"
 
 void init_sprites(SPRITES *sprites)
 {

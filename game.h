@@ -14,8 +14,8 @@
 
 #define UP 1
 #define DOWN (-1)
-// player sprite will require two costumes, a regular one and a dead one
-// a sprite for the player, aliens, spaceship and bullets
+
+
 typedef struct SPRITES_T
 {
     ALLEGRO_BITMAP *_sheet;
@@ -31,6 +31,7 @@ typedef struct SPRITES_T
     ALLEGRO_BITMAP *spaceinvaderslogo;
     ALLEGRO_BITMAP *explosion;
     ALLEGRO_BITMAP *shot;
+    ALLEGRO_BITMAP *obstacles[5];
 
 } SPRITES;
 
@@ -40,7 +41,6 @@ typedef struct shot
     float x, y;
     struct shot *next;
 } SHOT;
-
 
 void init_sprites(SPRITES *sprites);
 ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h);

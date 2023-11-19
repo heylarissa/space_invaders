@@ -12,20 +12,25 @@
 #include "game.h"
 #include "player.h"
 #include "enemies.h"
+#include "obstacles.h"
 
-void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites)
+void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, OBSTACLE obstacles[NUM_OBSTACLES])
 {
     srand((unsigned int)time(NULL));
     init_sprites(sprites);
     init_player(player, sprites);
     init_spaceship(spaceship, sprites);
     init_enemies(sprites, enemies);
+    init_obstacles(obstacles, sprites);
 }
 
-void startNewRound(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player)
+void startNewRound(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
 {
-    init_game(player, enemies, spaceship, sprites);
+    init_spaceship(spaceship, sprites);
+    init_enemies(sprites, enemies);
+    init_obstacles(obstacles, sprites);
 }
+
 bool checkAllEnemiesDefeated(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
@@ -81,8 +86,9 @@ int main()
     PLAYER player;
     ENEMY *spaceship = (ENEMY *)malloc(sizeof(ENEMY));
     ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE];
+    OBSTACLE obstacles[NUM_OBSTACLES];
 
-    init_game(&player, enemies, spaceship, sprites);
+    init_game(&player, enemies, spaceship, sprites, obstacles);
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -104,7 +110,7 @@ int main()
 
             if ((menu == TRUE) && ((key[ALLEGRO_KEY_SPACE]) || (key[ALLEGRO_KEY_ENTER])))
                 menu = FALSE;
-            else
+            else if (!gameover)
             {
                 frame_count++;
 
@@ -133,7 +139,7 @@ int main()
                 if (checkAllEnemiesDefeated(enemies))
                 {
                     player.lives++;
-                    startNewRound(enemies, spaceship, sprites, &player);
+                    startNewRound(enemies, spaceship, sprites, &player, obstacles);
                     currentRound++;
                 }
             }
@@ -198,11 +204,7 @@ int main()
                 al_draw_bitmap(sprites->player, player.x, player.y, 0);
                 draw_player_shots(player.shots);
 
-                // desenha tiros dos inimigos
-                // se tiro atingiu player, imprime outra animação do player
-                // se tiro atingiu inimigo, imprime inimigo explodindo
-                // pros obstáculos usar uma imagem e só plotar o pixel quando o tiro atingir
-                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5);
+                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
             }
             al_flip_display();
 
