@@ -1,6 +1,5 @@
 
 #include "display.h"
-#include "game.h"
 #include "player.h"
 #include "enemies.h"
 #include "shots.h"

@@ -4,7 +4,6 @@
 #define NUM_OBSTACLES 5
 #define OBSTACLE_LIFE 10
 
-#include "game.h"
 #include "display.h"
 #include "enemies.h"
 

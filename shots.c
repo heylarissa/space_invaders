@@ -8,7 +8,6 @@
 
 #include "display.h"
 #include "player.h"
-#include "game.h"
 #include "enemies.h"
 #include "shots.h"
 #include "obstacles.h"

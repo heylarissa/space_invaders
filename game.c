@@ -1,81 +1,107 @@
 #include "game.h"
-#include "display.h"
-#include "player.h"
-#include "enemies.h"
-#include "utils.h"
-#include "obstacles.h"
 
-void init_sprites(SPRITES *sprites)
+void start_new_round(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
 {
-    sprites->_sheet = al_load_bitmap("./assets/sprites.png");
-    must_init(sprites->_sheet, "sprites");
-
-    sprites->spaceinvaderslogo = select_sprite(sprites->_sheet, 160, 0, 250, 170);
-    sprites->spaceship = select_sprite(sprites->_sheet, 365, 770, 220, 100);
-    sprites->player = select_sprite(sprites->_sheet, 350, 1160, 110, 68);
-
-    sprites->explosion_player = select_sprite(sprites->_sheet, 364, 275, (400 - 364), (290 - 275));
-    sprites->explosion_enemy = select_sprite(sprites->_sheet, 436, 275, (464 - 436), (290 - 292));
-
-    sprites->shot_intermed = select_sprite(sprites->_sheet, 410, 276, (420 - 410), (289 - 276));
-    sprites->shot_strong = select_sprite(sprites->_sheet, 379, 1903, (394 - 379), (1928 - 1903));
-
-    sprites->aliens_t1[0] = select_sprite(sprites->_sheet, 146, 225, 25, 17); // v1
-    sprites->aliens_t1[1] = select_sprite(sprites->_sheet, 180, 225, 25, 17); // v2
-
-    sprites->aliens_t2[0] = select_sprite(sprites->_sheet, 73, 225, 25, 17);  // v1
-    sprites->aliens_t2[1] = select_sprite(sprites->_sheet, 106, 225, 25, 17); // v2
-
-    sprites->aliens_t3[0] = select_sprite(sprites->_sheet, 35, 225, 25, 17); // v3
-    sprites->aliens_t3[1] = select_sprite(sprites->_sheet, 6, 225, 25, 17);  // v3
-
-    sprites->obstacles[0] = select_sprite(sprites->_sheet, 315, 210, 45, 35); // sem dano
-    sprites->obstacles[1] = select_sprite(sprites->_sheet, 479, 210, 45, 35); // dano 2
-    sprites->obstacles[2] = select_sprite(sprites->_sheet, 479, 263, 45, 35); // dano 4
-    sprites->obstacles[3] = select_sprite(sprites->_sheet, 426, 210, 45, 35); // dano 6
-    sprites->obstacles[4] = select_sprite(sprites->_sheet, 372, 210, 45, 35); // dano 8
+    init_spaceship(spaceship, sprites);
+    init_enemies(sprites, enemies);
+    init_obstacles(obstacles, sprites);
 }
 
-void destroy_sprites(SPRITES *sprites)
+void destroy_game(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player,
+                  SPRITES *sprites, ALLEGRO_FONT *font, ALLEGRO_TIMER *timer,
+                  ALLEGRO_EVENT_QUEUE *queue, ALLEGRO_DISPLAY *disp)
 {
-    al_destroy_bitmap(sprites->_sheet);
-    al_destroy_bitmap(sprites->spaceinvaderslogo);
-    al_destroy_bitmap(sprites->spaceship);
-
-    al_destroy_bitmap(sprites->aliens_t1[0]);
-    al_destroy_bitmap(sprites->aliens_t2[0]);
-    al_destroy_bitmap(sprites->aliens_t3[0]);
-
-    al_destroy_bitmap(sprites->aliens_t1[1]);
-    al_destroy_bitmap(sprites->aliens_t2[1]);
-    al_destroy_bitmap(sprites->aliens_t3[1]);
-
-    al_destroy_bitmap(sprites->obstacles[0]);
-    al_destroy_bitmap(sprites->obstacles[1]);
-    al_destroy_bitmap(sprites->obstacles[2]);
-    al_destroy_bitmap(sprites->obstacles[3]);
-    al_destroy_bitmap(sprites->obstacles[4]);
-
-    free(sprites);
+    destroy_enemies(enemies);
+    destroy_player(player);
+    destroy_sprites(sprites);
+    al_destroy_font(font);
+    al_destroy_timer(timer);
+    al_destroy_event_queue(queue);
+    al_destroy_display(disp);
 }
 
-// Seleciona a parte da imagem a ser cortada
-ALLEGRO_BITMAP *select_sprite(ALLEGRO_BITMAP *img, int x, int y, int w, int h)
+void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, OBSTACLE obstacles[NUM_OBSTACLES])
 {
-    ALLEGRO_BITMAP *sprite = al_create_sub_bitmap(img, x, y, w, h);
-    must_init(sprite, "select sprite");
-    return sprite;
+    srand((unsigned int)time(NULL));
+    init_sprites(sprites);
+    init_player(player, sprites);
+    init_spaceship(spaceship, sprites);
+    init_enemies(sprites, enemies);
+    init_obstacles(obstacles, sprites);
 }
 
-
-void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
+void draw_game(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites, ALLEGRO_FONT *font, PLAYER *player, int currentRound, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY spaceship)
 {
-    int pos_x = TOTAL_WIDTH - 350;
-    int pos_y = 5;
-    al_draw_text(font, WHITE, TOTAL_WIDTH - 400, 0, 0, "LIVES ");
-    for (int i = 0; i < lives; i++)
+    /* desenha obstáculos */
+    draw_obstacles(obstacles, sprites);
+
+    // desenha tela
+    al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player->score);                               // score do player
+    draw_lives(player->lives, sprites->player, font);                                             // vidas do player
+    al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound);                              // score do player
+    al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
+
+    // desenha inimigos
+    al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
+                          al_get_bitmap_width(sprites->spaceship),
+                          al_get_bitmap_height(sprites->spaceship),
+                          spaceship.x, spaceship.y,
+                          al_get_bitmap_width(sprites->spaceship) * 0.5,
+                          al_get_bitmap_height(sprites->spaceship) * 0.5, 0); // desenha nave vermelha
+
+    draw_enemies(enemies, sprites);
+
+    // desenha player
+    draw_player(sprites, *player);
+}
+void game_logic(unsigned char key[], PLAYER *player, GameState *gameState, int *frame_count, SPRITES *sprites, ENEMY *spaceship, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES])
+{
+    if (player->lives == 0)
+        *gameState = GAME_OVER;
+
+    if (player->state == explode)
     {
-        pos_x = pos_x + al_get_bitmap_width(live) * 0.5;
-        scale_image(live, pos_x, pos_y, 0.5);
+        player->state = alive;
+        player->x = 50;
+    }
+
+    /* enemy logic */
+    if (*frame_count % 30 == 0)
+        update_enemies(enemies, spaceship);
+    else if (*frame_count % 5 == 0)
+        update_enemies_shots(enemies, player, obstacles);
+
+    /* player logic */
+
+    update_player_shots(player, enemies, obstacles);
+    move_player(key, player);
+}
+void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, int currentRound, OBSTACLE obstacles[NUM_OBSTACLES], PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY spaceship)
+{
+    switch (*gameState)
+    {
+    case MENU:
+        al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+        al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "MENU");
+        al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS SPACE OR ENTER TO START");
+        break;
+
+    case GAME_OVER:
+        al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+        al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
+        al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS ESC OR CLOSE THE WINDOW");
+        break;
+
+    case PAUSED:
+        al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
+        al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "PAUSED");
+        al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS P TO CONTINUE");
+        al_flip_display();
+        break;
+
+    case GAME:
+
+        draw_game(obstacles, sprites, font, player, currentRound, enemies, spaceship);
+        break;
     }
 }

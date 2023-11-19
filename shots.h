@@ -3,7 +3,6 @@
 
 #include "enemies.h"
 #include "player.h"
-#include "game.h"
 #include "obstacles.h"
 
 #define ENEMY_SHOT_SPEED 10

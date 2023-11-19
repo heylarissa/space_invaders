@@ -1,5 +1,4 @@
 #include "obstacles.h"
-#include "game.h"
 #include "utils.h"
 #include "display.h"
 #include "enemies.h"

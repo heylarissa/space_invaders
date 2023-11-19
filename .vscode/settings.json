@@ -5,12 +5,12 @@
         "allegro_font.h": "c",
         "allegro5.h": "c",
         "display.h": "c",
-        "game.h": "c",
         "allegro_image.h": "c",
         "player.h": "c",
         "enemies.h": "c",
         "shots.h": "c",
         "utils.h": "c",
-        "obstacles.h": "c"
+        "obstacles.h": "c",
+        "stdlib.h": "c"
     }
 }

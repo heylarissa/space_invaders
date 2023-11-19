@@ -7,7 +7,6 @@
 #include <allegro5/allegro_primitives.h>
 
 #include "display.h"
-#include "game.h"
 #include "player.h"
 #include "enemies.h"
 
