@@ -220,9 +220,10 @@ int main()
                 draw_obstacles(obstacles, sprites);
 
                 // desenha tela
-                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);   // score do player
-                draw_lives(player.lives, sprites->player, font);                 // vidas do player
-                al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound); // score do player
+                al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player.score);                                // score do player
+                draw_lives(player.lives, sprites->player, font);                                              // vidas do player
+                al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound);                              // score do player
+                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
 
                 // desenha inimigos
                 al_draw_scaled_bitmap(sprites->spaceship, 0, 0,
@@ -237,7 +238,6 @@ int main()
                 // desenha player
                 draw_player(sprites, player);
 
-                al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
                 break;
             }
             al_flip_display();
