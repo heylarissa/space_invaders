@@ -117,14 +117,8 @@ int main()
 
                 if (player.state == explode)
                 {
-                    player.explosion_frame++;
-
-                    if (player.explosion_frame > MAX_EXPLOSION_FRAMES)
-                    {
-                        player.state = alive;
-                        player.explosion_frame = 0;
-                        player.x = 50;
-                    }
+                    player.state = alive;
+                    player.x = 50;
                 }
 
                 /* player logic */
