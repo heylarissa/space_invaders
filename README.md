@@ -50,7 +50,7 @@ https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace
     - Inimigo fraco (duas imagens alternantes); - OK  
     - Inimigo intermediário (duas imagens alternantes); - OK  
     - Inimigo forte (duas imagens alternantes) - OK  
-- [ ] Cada tipo de inimigo deve ter um projétil diferente  
+- [x] Cada tipo de inimigo deve ter um projétil diferente  
 - [ ] Deve existir uma animação de explosão do inimigo e da nave, quando estes forem derrotados.  
 
 #### Tela
