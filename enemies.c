@@ -102,26 +102,26 @@ void draw_enemies(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SPRITES *s
                 if (enemies[i][j].type == weak)
                 {
                     if (enemies[i][j].state == ENEMY_STATE_ONE)
-                        scale_image(sprites->aliens_t1[0], enemies[i][j].x, enemies[i][j].y, 2);
+                        scale_image(sprites->aliens_t1[0], enemies[i][j].x, enemies[i][j].y, ENEMY_RESIZE);
 
                     else if (enemies[i][j].state == ENEMY_STATE_TWO)
-                        scale_image(sprites->aliens_t1[1], enemies[i][j].x, enemies[i][j].y, 2);
+                        scale_image(sprites->aliens_t1[1], enemies[i][j].x, enemies[i][j].y, ENEMY_RESIZE);
                 }
                 else if (enemies[i][j].type == intermed)
                 {
                     if (enemies[i][j].state == ENEMY_STATE_ONE)
-                        scale_image(sprites->aliens_t2[0], enemies[i][j].x, enemies[i][j].y, 2);
+                        scale_image(sprites->aliens_t2[0], enemies[i][j].x, enemies[i][j].y, ENEMY_RESIZE);
 
                     else if (enemies[i][j].state == ENEMY_STATE_TWO)
-                        scale_image(sprites->aliens_t2[1], enemies[i][j].x, enemies[i][j].y, 2);
+                        scale_image(sprites->aliens_t2[1], enemies[i][j].x, enemies[i][j].y, ENEMY_RESIZE);
                 }
                 else
                 {
                     if (enemies[i][j].state == ENEMY_STATE_ONE)
-                        scale_image(sprites->aliens_t3[0], enemies[i][j].x, enemies[i][j].y, 2);
+                        scale_image(sprites->aliens_t3[0], enemies[i][j].x, enemies[i][j].y, ENEMY_RESIZE);
 
                     else if (enemies[i][j].state == ENEMY_STATE_TWO)
-                        scale_image(sprites->aliens_t3[1], enemies[i][j].x, enemies[i][j].y, 2);
+                        scale_image(sprites->aliens_t3[1], enemies[i][j].x, enemies[i][j].y, ENEMY_RESIZE);
                 }
             }
         }
@@ -142,7 +142,6 @@ void init_spaceship(ENEMY *spaceship, SPRITES *sprites)
 void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
 {
     /* Muda a linha dos inimigos quando necessário */
-
     for (int i = 0; i < NUM_ENEMIES_LINES; i++)
     {
         for (int j = 0; j < ENEMIES_PER_LINE; j++)
@@ -150,17 +149,15 @@ void move_enemies(ENEMY (*enemies)[ENEMIES_PER_LINE])
             if (enemies[i][j].state != DEAD_ENEMY)
                 enemies[i][j].state = !enemies[i][j].state;
 
-            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width) || (enemies[i][j].x < 0)) // encosta na borda
-            {
+            if ((enemies[i][j].x >= TOTAL_WIDTH - enemies[i][j].width * ENEMY_RESIZE) || (enemies[i][j].x < 0)) // encosta na borda
+
                 for (int i = 0; i < NUM_ENEMIES_LINES; i++)
-                {
+
                     for (int j = 0; j < ENEMIES_PER_LINE; j++)
                     {
                         enemies[i][j].y += ENEMY_SPEED / 6;
                         enemies[i][j].direction = !enemies[i][j].direction; // inverte a direção
                     }
-                }
-            }
         }
     }
 

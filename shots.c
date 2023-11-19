@@ -128,8 +128,8 @@ void update_enemies_shots(ENEMY (*enemies)[ENEMIES_PER_LINE], PLAYER *player, OB
         if (enemies[random_line][random_column].shots == NULL) // sem tiros ativos
         {
             enemies[random_line][random_column].shots = malloc(sizeof(SHOT));
-            enemies[random_line][random_column].shots->x = (enemies[random_line][random_column].x + enemies[random_line][random_column].width / 2);
-            enemies[random_line][random_column].shots->y = (enemies[random_line][random_column].y + enemies[random_line][random_column].height);
+            enemies[random_line][random_column].shots->x = (enemies[random_line][random_column].x + enemies[random_line][random_column].width * ENEMY_RESIZE / 2);
+            enemies[random_line][random_column].shots->y = (enemies[random_line][random_column].y + enemies[random_line][random_column].height * ENEMY_RESIZE);
             enemies[random_line][random_column].shots->direction = DOWN;
             shooting_count++;
         }
@@ -145,9 +145,9 @@ int kill_enemy(ENEMY enemies[NUM_ENEMIES_LINES][ENEMIES_PER_LINE], SHOT *shot, P
 
             if ((enemies[i][j].state != DEAD_ENEMY) &&
                 (shot->x >= enemies[i][j].x) &&
-                (shot->x <= (enemies[i][j].x + enemies[i][j].width)) &&
+                (shot->x <= (enemies[i][j].x + enemies[i][j].width * ENEMY_RESIZE)) &&
                 (shot->y >= enemies[i][j].y) &&
-                (shot->y <= (enemies[i][j].y + enemies[i][j].height)))
+                (shot->y <= (enemies[i][j].y + enemies[i][j].height * ENEMY_RESIZE)))
             {
                 enemies[i][j].state = DEAD_ENEMY;
                 if (enemies[i][j].type == weak)
