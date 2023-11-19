@@ -17,7 +17,7 @@ Devem existir três tipos de inimigos: - OK
 #### Nave
 - A nave pode se mover a direita e à esquerda, até as bordas do mapa - OK
 - A nave pode atirar caso não exista um projétil seu na coluna - OK
-- O projétil da nave causa um de dano em obstáculos
+- O projétil da nave causa um (1) de dano em obstáculos
 - A nave inicia com três vidas, sendo que uma vida é removida cada vez que a mesma é acertada; - OK
     e uma vida adicionada a cada fim de rodada (ao máximo de cinco vidas). - OK
 
