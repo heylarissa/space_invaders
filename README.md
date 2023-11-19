@@ -11,8 +11,8 @@ Devem existir três tipos de inimigos: - OK
     - Fracos, não atiram caso exista uma entidade à sua frente ou se já existir um projétil na coluna, causam um (1) de dano em obstáculos;  
     - Intermediários, não atiram caso exista um projétil na coluna, causam dois (2) de dano em obstáculos;  
     - Fortes, podem atirar mesmo se existir até um projétil na coluna, causam dois (2) de dano em obstáculos.  
-- A cada “rodada” apenas dois (2) inimigos podem atirar, dando preferência àqueles mais próximos à nave. - OK  
-- Os inimigos têm apenas uma vida, sendo esta removida uma vez que o mesmo é acertado por um projétil da nave. - OK  
+- [ ] A cada “rodada” apenas dois (2) inimigos podem atirar, dando preferência àqueles mais próximos à nave. - OK  
+- [ ]Os inimigos têm apenas uma vida, sendo esta removida uma vez que o mesmo é acertado por um projétil da nave. - OK  
 
 #### Nave
 - A nave pode se mover a direita e à esquerda, até as bordas do mapa - OK  
