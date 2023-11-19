@@ -13,19 +13,7 @@
 #include "player.h"
 #include "enemies.h"
 #include "obstacles.h"
-void game_pause(ALLEGRO_TIMER *timer, GameState *gameState)
-{
-    if (al_get_timer_started(timer))
-    {
-        al_stop_timer(timer);
-        *gameState = PAUSED;
-    }
-    else
-    {
-        al_start_timer(timer);
-        *gameState = GAME;
-    }
-}
+
 int main()
 {
     // TODO: Refatorar toda a inicialização do allegro para uma única struct

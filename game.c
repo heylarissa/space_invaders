@@ -109,3 +109,17 @@ void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, i
         break;
     }
 }
+
+void game_pause(ALLEGRO_TIMER *timer, GameState *gameState)
+{
+    if (al_get_timer_started(timer))
+    {
+        al_stop_timer(timer);
+        *gameState = PAUSED;
+    }
+    else
+    {
+        al_start_timer(timer);
+        *gameState = GAME;
+    }
+}
