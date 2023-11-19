@@ -15,7 +15,6 @@
 #define UP 1
 #define DOWN (-1)
 
-
 typedef struct SPRITES_T
 {
     ALLEGRO_BITMAP *_sheet;

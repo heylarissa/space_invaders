@@ -14,19 +14,18 @@
 #include "enemies.h"
 #include "obstacles.h"
 
-void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, OBSTACLE obstacles[NUM_OBSTACLES])
+void start_new_round(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
 {
-    srand((unsigned int)time(NULL));
-    init_sprites(sprites);
-    init_player(player, sprites);
     init_spaceship(spaceship, sprites);
     init_enemies(sprites, enemies);
     init_obstacles(obstacles, sprites);
 }
 
-
-void startNewRound(ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, PLAYER *player, OBSTACLE obstacles[NUM_OBSTACLES])
+void init_game(PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY *spaceship, SPRITES *sprites, OBSTACLE obstacles[NUM_OBSTACLES])
 {
+    srand((unsigned int)time(NULL));
+    init_sprites(sprites);
+    init_player(player, sprites);
     init_spaceship(spaceship, sprites);
     init_enemies(sprites, enemies);
     init_obstacles(obstacles, sprites);
@@ -123,7 +122,7 @@ int main()
                 if (checkAllEnemiesDefeated(enemies))
                 {
                     player.lives++;
-                    startNewRound(enemies, spaceship, sprites, &player, obstacles);
+                    start_new_round(enemies, spaceship, sprites, &player, obstacles);
                     currentRound++;
                 }
             }

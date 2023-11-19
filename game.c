@@ -50,3 +50,4 @@ void draw_lives(int lives, ALLEGRO_BITMAP *live, ALLEGRO_FONT *font)
         scale_image(live, pos_x, pos_y, 0.5);
     }
 }
+
