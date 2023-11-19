@@ -49,7 +49,11 @@ void draw_game(OBSTACLE obstacles[NUM_OBSTACLES], SPRITES *sprites, ALLEGRO_FONT
     // desenha player
     draw_player(sprites, *player);
 }
-void game_logic(unsigned char key[], PLAYER *player, GameState *gameState, int *frame_count, SPRITES *sprites, ENEMY *spaceship, ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES])
+
+void game_logic(unsigned char key[], PLAYER *player, GameState *gameState,
+                int *frame_count, SPRITES *sprites, ENEMY *spaceship,
+                ENEMY (*enemies)[ENEMIES_PER_LINE], OBSTACLE obstacles[NUM_OBSTACLES]
+                )
 {
     if (player->lives == 0)
         *gameState = GAME_OVER;
@@ -70,6 +74,7 @@ void game_logic(unsigned char key[], PLAYER *player, GameState *gameState, int *
     update_player_shots(player, enemies, obstacles, spaceship);
     move_player(key, player);
 }
+
 void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, int currentRound, OBSTACLE obstacles[NUM_OBSTACLES], PLAYER *player, ENEMY (*enemies)[ENEMIES_PER_LINE], ENEMY spaceship)
 {
     switch (*gameState)
@@ -81,6 +86,10 @@ void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, i
         break;
 
     case GAME_OVER:
+        al_draw_textf(font, WHITE, 0, 0, 0, "SCORE %d", player->score);                               // score do player
+        draw_lives(player->lives, sprites->player, font);                                             // vidas do player
+        al_draw_textf(font, WHITE, 800, 0, 0, "ROUND %d", currentRound);                              // score do player
+        al_draw_line(0, TOTAL_HEIGHT - MARGIN / 2, TOTAL_WIDTH, TOTAL_HEIGHT - MARGIN / 2, GREEN, 5); // margem verde inferior
         al_draw_bitmap(sprites->spaceinvaderslogo, (TOTAL_WIDTH) / 2 - (410 - 160) / 2, (TOTAL_HEIGHT) / 2 - 2 * MARGIN, 0);
         al_draw_textf(font, WHITE, (TOTAL_WIDTH) / 2, MARGIN, ALLEGRO_ALIGN_CENTER, "GAME OVER");
         al_draw_textf(font, GREEN, (TOTAL_WIDTH) / 2, (TOTAL_HEIGHT) / 2, ALLEGRO_ALIGN_CENTER, "PRESS ESC OR CLOSE THE WINDOW");
@@ -94,8 +103,21 @@ void redraw_screem(GameState *gameState, SPRITES *sprites, ALLEGRO_FONT *font, i
         break;
 
     case GAME:
-
         draw_game(obstacles, sprites, font, player, currentRound, enemies, spaceship);
         break;
+    }
+}
+
+void game_pause(ALLEGRO_TIMER *timer, GameState *gameState)
+{
+    if (al_get_timer_started(timer))
+    {
+        al_stop_timer(timer);
+        *gameState = PAUSED;
+    }
+    else
+    {
+        al_start_timer(timer);
+        *gameState = GAME;
     }
 }
